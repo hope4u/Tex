@@ -1,0 +1,316 @@
+{
+	"auto_complete":
+	{
+		"selected_items":
+		[
+			[
+				"di",
+				"directory"
+			],
+			[
+				"zip",
+				"zipFile"
+			],
+			[
+				"z",
+				"zipFile"
+			],
+			[
+				"C",
+				"Create-Zip"
+			]
+		]
+	},
+	"buffers":
+	[
+	],
+	"build_system": "",
+	"command_palette":
+	{
+		"height": 392.0,
+		"selected_items":
+		[
+			[
+				"late",
+				"LaTeXTools: View PDF"
+			],
+			[
+				"set",
+				"Set Syntax: TeX"
+			],
+			[
+				"ins",
+				"Package Control: Install Package"
+			],
+			[
+				"power",
+				"Set Syntax: Powershell v2"
+			],
+			[
+				"inst",
+				"Package Control: Install Package"
+			],
+			[
+				"emmet ab",
+				"Emmet: Expand Abbreviation"
+			],
+			[
+				"pro",
+				"Project: Close"
+			],
+			[
+				"set scss",
+				"Set Syntax: SCSS"
+			],
+			[
+				"pack in",
+				"Package Control: Install Package"
+			],
+			[
+				"set sy sa",
+				"Set Syntax: Sass"
+			],
+			[
+				"ena",
+				"Package Control: Enable Package"
+			],
+			[
+				"dis",
+				"Package Control: Disable Package"
+			],
+			[
+				"set ",
+				"Set Syntax: Sass"
+			],
+			[
+				"inst ",
+				"Package Control: Install Package"
+			],
+			[
+				"pack int",
+				"Package Control: Install Package"
+			],
+			[
+				"pa ins",
+				"Package Control: Install Package"
+			],
+			[
+				"inst pac",
+				"Package Control: Install Package"
+			],
+			[
+				"pack re",
+				"Package Control: Remove Package"
+			],
+			[
+				"set sass",
+				"Set Syntax: Sass"
+			],
+			[
+				"pac in",
+				"Package Control: Install Package"
+			],
+			[
+				"pac re",
+				"Package Control: Remove Package"
+			],
+			[
+				"packag in",
+				"Package Control: Install Package"
+			],
+			[
+				"pack disc",
+				"Package Control: Discover Packages"
+			],
+			[
+				"package control",
+				"Package Control: Add Channel"
+			],
+			[
+				"package",
+				"Preferences: Browse Packages"
+			]
+		],
+		"width": 400.0
+	},
+	"console":
+	{
+		"height": 126.0,
+		"history":
+		[
+			"import urllib.request,os,hashlib; h = '7183a2d3e96f11eeadd761d777e62404e330c659d4bb41d3bdf022e94cab3cd0'; pf = 'Package Control.sublime-package'; ipp = sublime.installed_packages_path(); urllib.request.install_opener( urllib.request.build_opener( urllib.request.ProxyHandler()) ); by = urllib.request.urlopen( 'http://sublime.wbond.net/' + pf.replace(' ', '%20')).read(); dh = hashlib.sha256(by).hexdigest(); print('Error validating download (got %s instead of %s), please try manual install' % (dh, h)) if dh != h else open(os.path.join( ipp, pf), 'wb' ).write(by)"
+		]
+	},
+	"distraction_free":
+	{
+		"menu_visible": true,
+		"show_minimap": false,
+		"show_open_files": false,
+		"show_tabs": false,
+		"side_bar_visible": false,
+		"status_bar_visible": false
+	},
+	"file_history":
+	[
+		"/C/Users/Marc/Desktop/MIMOnew/MarcMIMO.0.err",
+		"/C/Users/Marc/Desktop/MIMOnew/MarcMIMO.0.out",
+		"/C/Users/Marc/Desktop/MIMOnew/mimoproj.condor",
+		"/C/Users/Marc/SkyDrive/Documents/Studies/MIMOSemesterProject/Condor/MIMO/MIMOProj.log",
+		"/C/Users/Marc/Desktop/MIMO15/mimoproj.condor",
+		"/C/Users/Marc/Desktop/MIMO15/mimoproj.sh",
+		"/C/Users/Marc/SkyDrive/Documents/Studies/MIMOSemesterProject/Tex/First.tex",
+		"/C/Users/Marc/SkyDrive/Documents/Studies/MIMOSemesterProject/Condor/MIMO6_working/MIMOProj.0.out",
+		"/C/Users/Marc/SkyDrive/Documents/Studies/MIMOSemesterProject/Condor/MIMO7_working/MIMOProj.90.err",
+		"/C/Users/Marc/SkyDrive/Documents/Studies/MIMOSemesterProject/Condor/MIMO7_working/MIMOProj.90.out",
+		"/C/Users/Marc/Downloads/mandelbrot.sh",
+		"/C/Users/Marc/Downloads/mandelbrot.condor",
+		"/C/Users/Marc/SkyDrive/Documents/Studies/MIMOSemesterProject/Condor/MIMO/mimoproj.sh",
+		"/C/Users/Marc/SkyDrive/Documents/Studies/MIMOSemesterProject/Condor/MIMO/mimoproj.condor",
+		"/C/Users/Marc/Desktop/mimoproj.sh",
+		"/C/Users/Marc/Desktop/mimoroj.condor",
+		"/C/Users/Marc/SkyDrive/Documents/Filemaker/datatrans/test.php",
+		"/C/Users/Marc/Downloads/announce.4.6.5",
+		"/C/Users/Marc/SkyDrive/Documents/Studies/MIMOSemesterProject/First.tex",
+		"/C/Users/Marc/texlive/texmf-local/bibtex/bib/IEEEtranBST/README",
+		"/C/Users/Marc/AppData/Roaming/Sublime Text 3/Packages/User/Preferences.sublime-settings",
+		"/C/Users/Marc/AppData/Roaming/Sublime Text 3/Packages/User/LaTeXTools.sublime-settings",
+		"/C/Users/Marc/AppData/Roaming/Sublime Text 3/Packages/Default/Preferences.sublime-settings",
+		"/C/Users/Marc/AppData/Roaming/Sublime Text 3/Packages/LaTeXTools/LaTeX.sublime-build",
+		"/C/Users/Marc/SkyDrive/Documents/Studies/MIMOSemesterProject/Matlab/README.md",
+		"/C/Users/Marc/SkyDrive/Documents/Studies/MIMOSemesterProject/test.ps1",
+		"/C/Users/Marc/SkyDrive/Documents/Studies/MIMOSemesterProject/Matlab/.gitignore",
+		"/C/Users/Marc/SkyDrive/Documents/Studies/MIMOSemesterProject/Matlab/test.ps1",
+		"/C/Program Files/7-Zip/7z.dll",
+		"/C/Users/Marc/AppData/Local/GitHub/shell.ps1",
+		"/C/Users/Marc/.rnd",
+		"/C/Users/Marc/.gitconfig",
+		"/C/Users/Marc/Dropbox/WebSite/grunt/package.json",
+		"/C/Users/Marc/Dropbox/WebSite/grunt/project.json",
+		"/C/Users/Marc/Dropbox/WebSite/APN/components/sass/project.json",
+		"/C/Users/Marc/Dropbox/WebSite/APN/css/default.css",
+		"/C/Users/Marc/Dropbox/WebSite/APN/index.html",
+		"/C/Users/Marc/Dropbox/WebSite/APN/css/default.scss",
+		"/C/Users/Marc/Dropbox/WebSite/APN/APNWebPage.sublime-project",
+		"/C/Users/Marc/AppData/Roaming/Sublime Text 2/Packages/Sass/Syntaxes/Sass.tmLanguage"
+	],
+	"find":
+	{
+		"height": 23.0
+	},
+	"find_in_files":
+	{
+		"height": 0.0,
+		"where_history":
+		[
+		]
+	},
+	"find_state":
+	{
+		"case_sensitive": false,
+		"find_history":
+		[
+			"project"
+		],
+		"highlight": true,
+		"in_selection": false,
+		"preserve_case": false,
+		"regex": false,
+		"replace_history":
+		[
+		],
+		"reverse": false,
+		"show_context": true,
+		"use_buffer2": true,
+		"whole_word": false,
+		"wrap": true
+	},
+	"groups":
+	[
+		{
+			"sheets":
+			[
+			]
+		}
+	],
+	"incremental_find":
+	{
+		"height": 23.0
+	},
+	"input":
+	{
+		"height": 31.0
+	},
+	"layout":
+	{
+		"cells":
+		[
+			[
+				0,
+				0,
+				1,
+				1
+			]
+		],
+		"cols":
+		[
+			0.0,
+			1.0
+		],
+		"rows":
+		[
+			0.0,
+			1.0
+		]
+	},
+	"menu_visible": true,
+	"output.exec":
+	{
+		"height": 94.0
+	},
+	"output.find_results":
+	{
+		"height": 0.0
+	},
+	"project": "Reoprt.sublime-project",
+	"replace":
+	{
+		"height": 42.0
+	},
+	"save_all_on_build": true,
+	"select_file":
+	{
+		"height": 0.0,
+		"selected_items":
+		[
+		],
+		"width": 0.0
+	},
+	"select_project":
+	{
+		"height": 500.0,
+		"selected_items":
+		[
+		],
+		"width": 380.0
+	},
+	"select_symbol":
+	{
+		"height": 0.0,
+		"selected_items":
+		[
+		],
+		"width": 0.0
+	},
+	"settings":
+	{
+	},
+	"show_minimap": true,
+	"show_open_files": false,
+	"show_tabs": true,
+	"side_bar_visible": true,
+	"side_bar_width": 231.0,
+	"status_bar_visible": true,
+	"template_settings":
+	{
+	}
+}
