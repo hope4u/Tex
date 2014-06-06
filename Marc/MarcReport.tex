@@ -1,0 +1,161 @@
+\documentclass[a4paper,11pt]{book} 
+
+%=== PACKAGES ==============================================
+\usepackage{graphicx}
+\usepackage[english]{babel}
+\usepackage{color}      % for colored text
+\usepackage{xspace}     % for explicit spaces in abbreviations (\xspace)
+\usepackage{moreverb}   % more verbatim: \begin{boxedverbatim} for source code
+\usepackage{verbatim}   % for plain text
+\usepackage{algorithm}  % for algorithms
+\usepackage{algorithmic}% for algorithms
+\usepackage{multirow}   % for multi-rows in tables
+\usepackage{cite}       % will become: [2], [5]--[7]  (using cite.sty)
+\usepackage{float}
+\usepackage{listings}
+\usepackage{array}
+\usepackage{makeidx,shortvrb,latexsym}
+\usepackage[latin1]{inputenc}
+\usepackage{a4wide}
+\usepackage{amsfonts}
+\usepackage{amsmath}
+\usepackage{amssymb}
+%\usepackage{MnSymbol}
+\usepackage{fancyhdr}
+\usepackage{subfigure}
+\usepackage{psfrag}
+\usepackage{epsfig}
+\usepackage{caption}
+\usepackage{tocvsec2}
+%\usepackage[draft]{pdfpages}
+\usepackage{colortbl}
+\usepackage[T1]{fontenc}
+
+\input{macros}
+
+\definecolor{lgray}{gray}{0.9}
+\definecolor{dblue}{rgb}{0,0.08,0.7}
+%\definecolor{dblue}{rgb}{0.1,0.1,0.45}
+\definecolor{lred}{rgb}{1.0,0.8,0.8} 
+\definecolor{lgreen}{rgb}{0.8,1.0,0.8} 
+
+%=== Colored Hyperlinks ======================================
+\usepackage[ % IF PDF
+  colorlinks = true,        % links are colored
+  citecolor  = dblue,        % color of cite links
+  pagecolor  = dblue,        % color of page links
+  linkcolor  = dblue,        % color of hyperref links
+  menucolor  = dblue,        % color of Acrobat Reader menu buttons
+  urlcolor   = dblue,        % color of urls \url{}
+  bookmarks  = true, hyperindex=true, breaklinks=true,
+  baseurl={http://www.nari.ee.ethz.ch},
+  pdftitle={Distributed Multiuser Multihop Networks},             
+  pdfauthor={Raphael Rolny},             
+  pdfsubject={xxx},
+  pdfkeywords={xxx}
+]{hyperref}
+    % IF LaTeX
+%\usepackage[colorlinks=false]{hyperref}
+
+%=== Theorems ================================================
+\usepackage{amsthm}
+\newtheorem{thm}{Theorem}[chapter]
+\newtheorem{exmpl}{Example}[chapter]
+\newtheorem{propos}{Proposition}[chapter]
+\newtheorem{defi}{Definition}[chapter]
+\newtheorem{corol}{Corollary}[chapter]
+\newtheorem{lemma}{Lemma}[chapter]
+
+%== for algorithms ============================================
+\floatstyle{ruled}
+\newfloat{algorithm}{tb}{loa}  % loa: auxiliary file for list of algorithms
+\floatname{algorithm}{Algorithm}
+\newcommand{\theHalgorithm}{\arabic{algorithm}}
+
+%=== Index ====================================================
+%\usepackage{makeidx} 
+%\makeindex 
+
+%=== Fancy header =============================================
+\pagestyle{fancyplain}
+% with this we ensure that the chapter and section headings are in lowercase
+\fancyhf{} % delete current setting for header and footer
+\fancyhead[LE,RO]{\thepage}
+\fancyhead[LO]{\rightmark}
+\fancyhead[RE]{\leftmark}
+\addtolength{\headheight}{1.6pt} % make space for the rule
+\renewcommand{\headrulewidth}{0.5pt}
+\fancypagestyle{plain}{
+   \fancyhead{}  % get rid of headers on plain pages
+   \renewcommand{\headrulewidth}{0pt} % and the line
+}
+
+
+% --- Definition of short-cuts/macros ------------------------------
+%\input{macros}   % include standard macros
+\hyphenation{func-tion-al-ity}
+\hyphenation{beam-forming}
+
+%\newenvironment{code}{\begin{quote}}{\end{quote}}
+%\newcommand{\sourcecode}[1]{\texttt{#1}}
+\newcommand{\norm}{\xi}
+
+\setcounter{tocdepth}{1} % Leveltiefe in Contents
+
+% --- ansmath ------
+\DeclareMathOperator\erfc{erfc}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%% BEGIN DOCUMENT %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{document}
+\frontmatter
+\title{Distributed Multiuser Multihop Networks}
+\author{Marc Müller}
+\date{Spring 2014}
+
+%=== TITLE =======================================================
+\begin{titlepage}
+  \input{chapters/00-1title}
+\end{titlepage}
+
+%=== Preamble ====================================================
+\input{chapters/00-2preamble} % Abstract, Preface, Acknowledgements
+
+%=== Verzeichnisse ===============================================
+\tableofcontents
+\listoffigures 
+\listoftables
+\listofalgorithms
+
+%=== Chapters ====================================================
+\mainmatter
+\renewcommand{\baselinestretch}{1}\normalsize % Zeilenabstand
+%\settocdepth{section} % Kapitel Sectionweise in Contents
+\input{chapters/01-informationtheory}
+\input{chapters/02-optimizing}
+\input{chapters/03-results}
+
+%=== Appendix ===================================================
+%\settocdepth{chapter} % Appendix nur Kapitelweise in Contents
+\appendix
+%\input{chapters/a-cdcontents}
+
+%=== Bibliography ===============================================
+%\nocite{*}
+\cleardoublepage
+\addcontentsline {toc}{chapter}{Bibliography} 
+\bibliographystyle{IEEEtran}
+\bibliography{IEEEabrv,report}
+\cleardoublepage
+
+%=== Index ======================================================
+%\addcontentsline{toc}{chapter}{Index}
+%\printindex 
+%\cleardoublepage
+\end{document}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%  the  E N D  %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

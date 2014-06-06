@@ -1,72 +1,9 @@
-\documentclass[9pt,draft]{book}
-\usepackage[T1]{fontenc}
-\usepackage[latin1]{inputenc}
-\usepackage[english]{babel}
-
-\usepackage{amsmath}
-\usepackage[chapter]{algorithm}
-
-\DeclareMathOperator\erfc{erfc}
-
-\bibliographystyle{Report}
-%\bibliography{IEEEabrv,mybibfile}
-
-\begin{document}
-\author{Marc Müller}
-\title{MIMO Semester Project}
-
-\begin{abstract}
-\end{abstract}
-
-\chapter{The Channel}
-\section{The equivalent baseband representation}
-We can model a wireless channel as a complex number which is changing in time. Here we ignore that the complex data symbol is modulated and then mapped to a carrier frequency and that the channel itself is a real function. And only use the complex Channel representation:
-// complex channel representation
-
-\section{SISO}
-The well known channel model of a wireless communication System is that we have one antenna on each side – receiver and transmitter. This creates a Channel like //y=h*x+n, where one symbol is transmitted per time slot modulated by the channel and noise added.
-
-\section{MIMO}
-
-Over the last decade much research was done on MIMO (Multiple Input Multiple Output) channels. We use the spatial domoin to enhance perfomance with regard to date rates, outage and coverage.\\
-
-For a SISO channel in a Rayleigh fading channel we bit error rate off
-$$
-	P_b(|h|^2) = 1/2 \erfc{\Biggl(\sqrt{|h|^2\frac{\bar{E_b}}{N_0}}\Biggr)}.
-$$
-If we now send the same signal over $N$ statistically independent channels we get a BER of
-$$
-	P_b(|h|^2) = 1/2 \erfc{\Biggl(\sqrt{\sum_{j=1}^N{|h_j|^2\frac{E_s}{N_0}}}\Biggr)}
-$$
-for the euivalent SISO channel.
-\\ \\
-
-// formula SISO
-The spatial diversity as the name MIMO already sugges is achieved by using multiple Antennas on both receiver and transmitter side of the channel, which alters our channel form a single Tab //h per time to a Matrix //H.
-// formula MIMO Channel
-In a sufficient strong Fading environment and with sufficient antenna separation this Matrix is an all Random //H element of C, NxM Matrix.
-
-
-
-
+﻿
 \chapter{CSI}
 The question now is, is it possible to increase the Throughput of this channel with knowledge of the channel Matrix $H$. and to investigate this we use following Channel Representation and we are fully aware of its implications and imperfections.
 \\// description of our channel
 
-\section{An Optimal Solution}
-If we are in single user MIMO system and we can assume full CSI (Channel State Information at Transmitter and Receiver) we can fully diagonalize the Channel by using the SVD of $H$:
-$$
-	H = USV^H
-$$
-with $U$ and $V$ unitary and square and $S$ a diagonal matrix consiting of al singular Values of $H$.\\
-With this knowlage we can multiply our transmit and received vector as follows: $\tilde{y} = U^Hy $ and $ \tilde{x} = Vx$. and our transmit equation changes to 
-$$
-	\tilde{y} = U^HUSV^HVx = Sx.
-$$
-Now we have created min(N,M) parallel SISO systems out of our MIMO system. this brings us to the question of how to distribute the transmit power optimally over these systems to acheave the maximal possible ergodic rate.
-\subsection{waterfilling}
-The well known answer to that question is the water filling Solution described in //tsebook as follows:
- 
+
  \section{Multiuser Case}
 Since Water Filling diagonalizese the channel it does not matter what kind of decoder is used on the receiver side, the streams are already independent. But Waterfilling is only feasible in a single user case with full CSIT due to the fact that inter antenna data coordination is needed. So in a multi user scenario we need other methods to decode the channel.
 We use two well-known Receiver structures:
@@ -155,6 +92,30 @@ With this Algorithm we can prevent any fluctuation in the gradient and force it 
 // differences to the throughput max\\
 // question about convecity?\\
 
+\section{Fodor Paper}
 
+\subsection{The Algorithm}
+\begin{enumerate}
+	\item calculate the effective interference for MMSE processing:
+		\begin{multline}
+			\zeta_{k,s} = \biggl\{\biggl(d^{-\roh}_{k,k}\chi_{k,k}H^H_{k,k}\biggl(\sum_{j\neqk}{P_jd^{-\roh}_{k,j}\chi_{k,j}H_{k,j}T_jT_j^HH^H_{k,j}}\\
+			+N_t\sigma^2_nI\biggr)^{-1}H_{k,k}+\frac{1}{P_k}I\biggr)^{-1}\biggr\}^{(s,s)}
+		\end{multline}
 
-\end{document}
+	\item calculate the optimal loading matrix
+		\begin{equation}
+			(T_k)^{(s,s)} = \sqrt{\frac{\zeta_{k,s}N_t}{\sum_{j=1}^{N_t}\zeta_{k,j}}}\;\forall s\in[1,N_t]
+		\end{equation}
+
+	\item calculate used Power
+		\begin{equation}
+			P_k = \frac{\zeta_{k,s}}{\vert(T_k)^{(s,s)}\vert^2}(\gamma_{tgt}+1)\;\forall k
+		\end{equation}
+
+	\item[n.] until no more change
+
+\end{enumerate}
+
+\subsection{closed form Solution}
+Fodor reuses a poroposition for a closed form solution from xy.
+$p^*$ is calculated from ... with ---

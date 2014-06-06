@@ -23,6 +23,33 @@
 	},
 	"buffers":
 	[
+		{
+			"file": "Marc/chapters/01-2MIMO.tex",
+			"settings":
+			{
+				"buffer_size": 3199,
+				"line_ending": "Windows"
+			}
+		},
+		{
+			"contents": "\n\\chapter{CSI}\nThe question now is, is it possible to increase the Throughput of this channel with knowledge of the channel Matrix $H$. and to investigate this we use following Channel Representation and we are fully aware of its implications and imperfections.\n\\\\// description of our channel\n\n \n \\section{Multiuser Case}\nSince Water Filling diagonalizese the channel it does not matter what kind of decoder is used on the receiver side, the streams are already independent. But Waterfilling is only feasible in a single user case with full CSIT due to the fact that inter antenna data coordination is needed. So in a multi user scenario we need other methods to decode the channel.\nWe use two well-known Receiver structures:\n\\begin{enumerate}\n	\\item Linear MMSE Receiver\\\\\n	//formula\n	\\item V-BLAST MMSE or SIC with MMSE (MMSE-SIC)\\\\\n	//formula (algorithm)\\\\\n	Generally speaking the SIC receivers provide better Throughput but are more complicated to implement, and harder to adapt.\n\\end{enumerate}\n\n\\section{Optimizing the Throughput of V-Blast}\n[Jindal]\nThe Paper proposes an algorithm which optimizes the throughput with an SIC receiver, the papers goal is to solve the problem of beam forming in a Broadcast or Downlink Channel, so exactly the opposite direction than we are discussing in this report. But as //paper has described there is a duality of these two channels and we are able to use the optimized results of the MAC to optimize the BC. So his work is using this duality to solve the easer problem of the MAC and then transform it back to the BC problem, so his work is highly relevant to us.\\\\\n// Duality description\\\\\n// abstract of Jindal\\\\\n// Jindal algorithm\n\n\\section{Comparison}\nNumerical Gradient Search function\nWe implemented a numerical gradient search for the SIC receiver to compare to the Jindal algorithm in terms of throughput maximization. We do not compare it in terms of complexitiy or speed of convergence.\nConvergence is guaranteed for the numerical Gradient based on the work of //paper. And the Jindal himself adds the proof of convergence to in his paper.\n\\section{Linear MMSE}\nFrom there we started to investigate the LMMSE receiver.\\\\\n//theory\\\\\n// formulas\\\\\n\\section{Optimizing}\n// problems //drawbacks\\\\\nFodor describes an algorithm in his //paper to optimize the throughput of a typical Cellular Network Channel, but to improve stability and feasibility of his algorithm he sacrifices accuracy and chooses to use a very week constraint. Which leads to unusable results in comparison to an easy numerical Gradient search of the same Optimum.\n\n\\section{Numerical Gradient}\nSo we will only look at the numerical Gradient for Optimizing the LMMSE receiver. As shown in // Figure there is some pretty big improvement over just equal power distribution, but even for high SNR cases at least one channel is closed, which means that at least one user is not allowed to send any data.\n\n\n\\chapter{Gradient search}\n\\section{Steepest descent}\nThe idea of the steepest descent algorithm is to find the global maximum or minimum of a function by searching along the gradient of the function.\n\\begin{algorithm}\n	1.	Start at one point\n	2.	Calculate the Gradient\n	3.	Use the gradient to get to the next point (Step)\n	4.	Iterate\n\\end{algorithm}\nWe used two ways to calculate the gradient at a certain point, numerical and analytical:\n\n\\section{Numerical Gradient}\nThe numerical Algorithm calculates the Gradient with numerical means. Which means to increase the input in each dimension one after another by a very small amount and recalculate output. With both results, the original one and the new ones, we can approximate the local gradient very precisely.\n\\begin{algorithm}\n	1.	Calculate Starting Point\n	2.	1:K \n	a.	Increase input K\n	b.	Calculate Point\n	3.	Calculate Gradient\n	4.	Step to next point\n	5.	Iterate\n\\end{algorithm}\nAnalytical Gradient\nThe analytical Algorithm on the other hand uses analytical tools to calculate the gradient form the known function in advance. It uses the gradient function to calculate the exact gradient at each point.\n\\begin{algorithm}\n	Pre: calculate analytical Gradient by hand\n	1.	Calculate gradient at input Point with the precalculated gradient function\n	2.	Step to the next point\n	3.	Iterate\n\\end{algorithm}\n\n\\section{Analytical Gradient for Throughput Maximization}\n// calculations: formulas step by step\\\\\nImplementation with the norm and not just the sum allows us to use the same function in two different ways. Firstly with a //p value of 1, we just calculate the sum Rate for the throughput maximization or sum Rate maximization. Secondly we can set the //p value to something very small like -30 to create a maxmin optimizer. The Optimum would be the //min norm but this is not feasible in the numerical domain and is prone to get stuck in local minimas, here -30 is a good approximation, we tested the algorithm with -100 and achieved results which were closer to the optimum that each channel gets the same Rate but it’s not save to use.\n\n\\section{Adaptive step Size}\nOne Problem that occurred during the simulations was that at some point the gradient search got unstable, in our case it started to fluctuate and stopped moving towards the optimum. The reason of this bad and unwanted behavior lies in the step size of the function, and so there are two ways to fix it. The first and easy way is just to reduce the step size and increase the number of iterations accordingly, this way the problem occurs later and weaker and has less impact on the end result. The second much more complicated solution is to introduce adaptive step size.\\\\\nAdaptive Step size means, that for each iteration we search the optimal step size which allows us to take the biggest step towards our goal. So it should not be possible to choose a step size which gives us a worse result than we had on the iteration before.\n\\begin{algorithm}\n	Start at an arbitrary step size, calculate the next point\n	If next Point is better than last, increase step size\n	If next Point is worse than last, decrease step size\n	Stop if increasing or decreasing does not improve the result anymore\n\\end{algorithm}\nWith this Algorithm we can prevent any fluctuation in the gradient and force it to go the fastest possible way. We do not have to calculate the gradient as often and can thus reduce the needed calculation time. Another nice side effect is, that we implicitly know when we reached the maximum or minimum when the step size is decreased to zero without finding any better points than the previous.\n\n\\section{Implementation}\n//lots of code\\\\\n\n\\section{Gradient for power Minimization}\n// calculations\\\\\n// differences to the throughput max\\\\\n// question about convecity?\\\\\n\n\\section{Fodor Paper}\n\n\\subsection{The Algorithm}\n\\begin{enumerate}\n	\\item calculate the effective interference for MMSE processing:\n		\\begin{multline}\n			\\zeta_{k,s} = \\biggl\\{\\biggl(d^{-\\roh}_{k,k}\\chi_{k,k}H^H_{k,k}\\biggl(\\sum_{j\\neqk}{P_jd^{-\\roh}_{k,j}\\chi_{k,j}H_{k,j}T_jT_j^HH^H_{k,j}}\\\\\n			+N_t\\sigma^2_nI\\biggr)^{-1}H_{k,k}+\\frac{1}{P_k}I\\biggr)^{-1}\\biggr\\}^{(s,s)}\n		\\end{multline}\n\n	\\item calculate the optimal loading matrix\n		\\begin{equation}\n			(T_k)^{(s,s)} = \\sqrt{\\frac{\\zeta_{k,s}N_t}{\\sum_{j=1}^{N_t}\\zeta_{k,j}}}\\;\\forall s\\in[1,N_t]\n		\\end{equation}\n\n	\\item calculate used Power\n		\\begin{equation}\n			P_k = \\frac{\\zeta_{k,s}}{\\vert(T_k)^{(s,s)}\\vert^2}(\\gamma_{tgt}+1)\\;\\forall k\n		\\end{equation}\n\n	\\item[n.] until no more change\n\n\\end{enumerate}\n\n\\subsection{closed form Solution}\nFodor reuses a poroposition for a closed form solution from xy.\n$p^*$ is calculated from ... with ---",
+			"file": "Marc/chapters/02-optimizing.tex",
+			"file_size": 8644,
+			"file_write_time": 130465137489762392,
+			"settings":
+			{
+				"buffer_size": 7628,
+				"line_ending": "Windows"
+			}
+		},
+		{
+			"file": "Marc/MarcReport.tex",
+			"settings":
+			{
+				"buffer_size": 5315,
+				"line_ending": "Unix"
+			}
+		}
 	],
 	"build_system": "",
 	"command_palette":
@@ -152,6 +179,26 @@
 	},
 	"file_history":
 	[
+		"/C/Users/Marc/SkyDrive/Documents/Studies/MIMOSemesterProject/Tex/Marc/chapters/02-optimizing.tex",
+		"/C/Users/Marc/SkyDrive/Documents/Studies/MIMOSemesterProject/Tex/Marc/chapters/01-1basicChannel.tex",
+		"/C/Users/Marc/SkyDrive/Documents/Studies/MIMOSemesterProject/Tex/Marc/chapters/01-informationtheory.tex",
+		"/C/Users/Marc/SkyDrive/Documents/Studies/MIMOSemesterProject/Tex/Report.tex",
+		"/C/Users/Marc/SkyDrive/Documents/Studies/MIMOSemesterProject/Tex/Marc/chapters/03-results.tex",
+		"/C/Users/Marc/SkyDrive/Documents/Studies/MIMOSemesterProject/Tex/Marc/chapters/00-2preamble.tex",
+		"/C/Users/Marc/SkyDrive/Documents/Studies/MIMOSemesterProject/Tex/Marc/chapters/00-1title.tex",
+		"/C/Users/Marc/SkyDrive/Documents/Studies/MIMOSemesterProject/Tex/Reoprt.sublime-project",
+		"/C/Users/Marc/AppData/Roaming/Sublime Text 3/Packages/User/Default (Windows).sublime-keymap",
+		"/C/Users/Marc/AppData/Roaming/Sublime Text 3/Packages/Default/Default (Windows).sublime-keymap",
+		"/C/Users/Marc/SkyDrive/Documents/Studies/MIMOSemesterProject/Tex/Marc/chapters/._01-introduction.tex",
+		"/C/Users/Marc/SkyDrive/Documents/Studies/MIMOSemesterProject/Tex/Fodor.tex",
+		"/C/Users/Marc/SkyDrive/Documents/Studies/MIMOSemesterProject/Tex/Marc/chapters/01-informationtheory.log",
+		"/C/Users/Marc/SkyDrive/Documents/Studies/MIMOSemesterProject/Tex/Marc/report.tex",
+		"/C/Users/Marc/SkyDrive/Documents/Studies/MIMOSemesterProject/Tex/Report Stuff/ReportTemplate/ReportTemplate/report.tex",
+		"/C/Users/Marc/SkyDrive/Documents/Studies/MIMOSemesterProject/Tex/Report Stuff/ReportTemplate/ReportTemplate/macros.tex",
+		"/C/Users/Marc/SkyDrive/Documents/Studies/MIMOSemesterProject/Tex/Report Stuff/ReportTemplate/ReportTemplate/chapters/00-1title.tex",
+		"/C/Users/Marc/SkyDrive/Documents/Studies/MIMOSemesterProject/Tex/Report Stuff/ReportTemplate/ReportTemplate/chapters/01-introduction.tex",
+		"/C/Users/Marc/SkyDrive/Documents/Studies/MIMOSemesterProject/Tex/Report Stuff/ReportsExample/report_v2.pdf",
+		"/C/Users/Marc/SkyDrive/Documents/Studies/MIMOSemesterProject/Tex/First.synctex.gz",
 		"/C/Users/Marc/Desktop/MIMOnew/MarcMIMO.0.err",
 		"/C/Users/Marc/Desktop/MIMOnew/MarcMIMO.0.out",
 		"/C/Users/Marc/Desktop/MIMOnew/mimoproj.condor",
@@ -195,7 +242,7 @@
 	],
 	"find":
 	{
-		"height": 23.0
+		"height": 34.0
 	},
 	"find_in_files":
 	{
@@ -227,8 +274,96 @@
 	"groups":
 	[
 		{
+			"selected": 1,
 			"sheets":
 			[
+				{
+					"buffer": 0,
+					"file": "Marc/chapters/01-2MIMO.tex",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 3199,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								2790,
+								2790
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/LaTeX/LaTeX.tmLanguage"
+						},
+						"translation.x": 0.0,
+						"translation.y": 368.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 1,
+					"type": "text"
+				},
+				{
+					"buffer": 1,
+					"file": "Marc/chapters/02-optimizing.tex",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 7628,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								1225,
+								1225
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/LaTeX/LaTeX.tmLanguage",
+							"translate_tabs_to_spaces": false
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 0,
+					"type": "text"
+				},
+				{
+					"buffer": 2,
+					"file": "Marc/MarcReport.tex",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 5315,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								845,
+								845
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/LaTeX/LaTeX.tmLanguage",
+							"tab_size": 2,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 2,
+					"type": "text"
+				}
 			]
 		}
 	],
@@ -265,7 +400,7 @@
 	"menu_visible": true,
 	"output.exec":
 	{
-		"height": 94.0
+		"height": 115.0
 	},
 	"output.find_results":
 	{
