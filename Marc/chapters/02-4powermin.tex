@@ -1,0 +1,29 @@
+\section{optimizing for SINR target}
+\subsection{fodor}
+
+\section{Fodor Paper}
+//zusammenfassung
+
+\subsection{The Algorithm}
+\begin{enumerate}
+	\item calculate the effective interference for MMSE processing:
+		\begin{multline}
+			\zeta_{k,s} = \biggl\{\biggl(d^{-\roh}_{k,k}\chi_{k,k}H^H_{k,k}\biggl(\sum_{j\neqk}{P_jd^{-\roh}_{k,j}\chi_{k,j}H_{k,j}T_jT_j^HH^H_{k,j}}\\
+			+N_t\sigma^2_nI\biggr)^{-1}H_{k,k}+\frac{1}{P_k}I\biggr)^{-1}\biggr\}^{(s,s)}
+		\end{multline}
+
+	\item calculate the optimal loading matrix
+		\begin{equation}
+			(T_k)^{(s,s)} = \sqrt{\frac{\zeta_{k,s}N_t}{\sum_{j=1}^{N_t}\zeta_{k,j}}}\;\forall s\in[1,N_t]
+		\end{equation}
+
+	\item calculate used Power
+		\begin{equation}
+			P_k = \frac{\zeta_{k,s}}{\vert(T_k)^{(s,s)}\vert^2}(\gamma_{tgt}+1)\;\forall k
+		\end{equation}
+
+	\item[n.] until no more change
+
+\end{enumerate}
+
+\subsection{analytical gradient}

@@ -1,21 +1,21 @@
 \section{general Channel}
 //by book of Tse\\
-We use $x(t)$ as the transmitted signal and $y(t)$ as the received signal. Since the signal is affected by different optiects in its path the received signal can be written as a function of the resulting differenting paths $$y(t)=\sum_i{a_i(f,t)x(t-\tau_i(t))}$$. $a_i(f,t)$ describes the attenuation of each path which is mostly dependent on frequency and time. we can omitt these dependencies if we can assume sufficient narrow bandwitdth for a frequency flat channel and with relativly stationary objects a time flat channel, objects are transmitters, receivers, scatterers and so on. $\tau_i(t)$ is the delay in time of the path and is constant in a time flat channel.\\
-To destinguish between these different channels we introduce some measures:
+We use $x(t)$ as the transmitted signal and $y(t)$ as the received signal. Since the signal is affected by different objects in its path the received signal can be written as a function of the resulting different paths $$y(t)=\sum_i{a_i(f,t)x(t-\tau_i(t))}$$. $a_i(f,t)$ describes the attenuation of each path which is mostly dependent on frequency and time. we can omit these dependencies if we can assume sufficient narrow bandwidth for a frequency flat channel and with relatively stationary objects a time flat channel, objects are transmitters, receivers, scatterers and so on. $\tau_i(t)$ is the delay in time of the path and is constant in a time flat channel.\\
+To distinguish between these different channels we introduce some measures:
 \begin{description}
 	\item[Delay Spread $T_d$] describes the time difference from the first to the last arrival of the signal at the receiver.
 	\item[Doppler Spread $D_s$] describes the maximum frequency difference which is introduced by Doppler shifts.
-	\item[coherence Bandwidth $W_c$] is the inverse of the delay spread and a measure of the freuquency flatness of the channel. ist is the bandwidth at which we can assume that the channel is frequency independent.
-	\item[coherence Time $T_c$] is the inverse of the Doppler spread and a measure for the time flatness of the channel e.g. it is the time over wich the channel is time invariant. 
+	\item[coherence Bandwidth $W_c$] is the inverse of the delay spread and a measure of the frequency flatness of the channel. It is the bandwidth at which we can assume that the channel is frequency independent.
+	\item[coherence Time $T_c$] is the inverse of the Doppler spread and a measure for the time flatness of the channel e.g. it is the time over which the channel is time invariant. 
 \end{description}
 // image
 
 \subsection{The equivalent baseband representation}
-If we have a frequency-flat and time-flat channel we can represent our channel with a time varying channel gain $h$ which leads to $$y(t) = h \cdot x(t)$$ for our input output relation. But it is often simpler to use a complex baseband model. if we sample the system at a sufficiently high rate we get $$y[m] = \sum_l{h_l \cdot x[m]}$$ where $m$ describes descrete timey $x[m]$ and $y[m]$ the transmitted respectivly the received signal.  
+If we have a frequency-flat and time-flat channel we can represent our channel with a time varying channel gain $h$ which leads to $$y(t) = h \cdot x(t)$$ for our input output relation. But it is often simpler to use a complex baseband model. if we sample the system at a sufficiently high rate we get $$y[m] = \sum_l{h_l \cdot x[m]}$$ where $m$ describes discrete time $x[m]$ and $y[m]$ the transmitted respectively the received signal.  
 
 \subsection{Channel Capacity}
-the channel capacity is a good figure of merit to describe the optimal performance of a communication system. It gives a maximum data rate at which we could transmit errorfree when useing appropriate coding.
+the channel capacity is a good figure of merit to describe the optimal performance of a communication system. It gives a maximum data rate at which we could transmit error-free when using appropriate coding.
 \begin{description}
 	\item[AWGN-channel:] in an AWGN channel we experience no fading and the received signal consists just the sent signal with additive white Gaussian noise $y=x+n$. The capacity depends only on the transmit $P$ versus noise Power $N_0$: $$C=log\Biggr(1+\frac{P}{N_0}\Biggl) bits/s/Hz$$
-	\item[time- and frequency-flat fading channel:] in a oun tab fadin channel the capacity is a function of the tab gain $h$: $$C=log\Biggr(1+|h|^2\frac{P}{N_0}\Biggl) bits/s/Hz$$
+	\item[time- and frequency-flat fading channel:] in a one tab fading channel the capacity is a function of the tab gain $h$: $$C=log\Biggr(1+|h|^2\frac{P}{N_0}\Biggl) bits/s/Hz$$
 \end{description}

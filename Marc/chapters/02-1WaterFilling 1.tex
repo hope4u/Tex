@@ -1,0 +1,10 @@
+\section{Multiuser Case}
+Since Water Filling diagonalizes the channel it does not matter what kind of decoder is used on the receiver side, the streams are already independent. But Waterfilling is only feasible in a single user case with full CSIT due to the fact that inter antenna data coordination is needed. So in a multi user scenario we need other methods to decode the channel.
+We use two well-known Receiver structures:
+\begin{enumerate}
+	\item Linear MMSE Receiver\\
+	//formula
+	\item V-BLAST MMSE or SIC with MMSE (MMSE-SIC)\\
+	//formula (algorithm)\\
+	Generally speaking the SIC receivers provide better Throughput but are more complicated to implement, and harder to adapt.
+\end{enumerate}

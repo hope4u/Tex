@@ -1,0 +1,53 @@
+\section{Optimizing for MMSE}
+\subsection{gradient Search}
+
+The idea of the steepest descent algorithm is to find the global maximum or minimum of a function by searching along the gradient of the function.
+\begin{algorithm}
+	1.	Start at one point
+	2.	Calculate the Gradient
+	3.	Use the gradient to get to the next point (Step)
+	4.	Iterate
+\end{algorithm}
+We used two ways to calculate the gradient at a certain point, numerical and analytical:
+
+\subsubsection{Numerical Gradient}
+The numerical Algorithm calculates the Gradient with numerical means. Which means to increase the input in each dimension one after another by a very small amount and recalculate output. With both results, the original one and the new ones, we can approximate the local gradient very precisely.
+\begin{algorithm}
+	1.	Calculate Starting Point
+	2.	1:K 
+	a.	Increase input K
+	b.	Calculate Point
+	3.	Calculate Gradient
+	4.	Step to next point
+	5.	Iterate
+\end{algorithm}
+\subsubsection{Analytical Gradient}
+The analytical Algorithm on the other hand uses analytical tools to calculate the gradient form the known function in advance. It uses the gradient function to calculate the exact gradient at each point.
+\begin{algorithm}
+	Pre: calculate analytical Gradient by hand
+	1.	Calculate gradient at input Point with the precalculated gradient function
+	2.	Step to the next point
+	3.	Iterate
+\end{algorithm}
+
+\subsubsection{optimizing algorithm}
+One Problem that occurred during the simulations was that at some point the gradient search got unstable, in our case it started to fluctuate and stopped moving towards the optimum. The reason of this bad and unwanted behavior lies in the step size of the function, and so there are two ways to fix it. The first and easy way is just to reduce the step size and increase the number of iterations accordingly, this way the problem occurs later and weaker and has less impact on the end result. The second much more complicated solution is to introduce adaptive step size.\\
+Adaptive Step size means, that for each iteration we search the optimal step size which allows us to take the biggest step towards our goal. So it should not be possible to choose a step size which gives us a worse result than we had on the iteration before.
+\begin{algorithm}
+	Start at an arbitrary step size, calculate the next point
+	If next Point is better than last, increase step size
+	If next Point is worse than last, decrease step size
+	Stop if increasing or decreasing does not improve the result anymore
+\end{algorithm}
+With this Algorithm we can prevent any fluctuation in the gradient and force it to go the fastest possible way. We do not have to calculate the gradient as often and can thus reduce the needed calculation time. Another nice side effect is, that we implicitly know when we reached the maximum or minimum when the step size is decreased to zero without finding any better points than the previous.
+
+\subsection{max sumRate}
+
+// calculation
+
+\subsection{max minRate}
+// calculations: formulas step by step\\
+Implementation with the norm and not just the sum allows us to use the same function in two different ways. Firstly with a //p value of 1, we just calculate the sum Rate for the throughput maximization or sum Rate maximization. Secondly we can set the //p value to something very small like -30 to create a max-min optimizer. The Optimum would be the //min norm but this is not feasible in the numerical domain and is prone to get stuck in local minimas, here -30 is a good approximation, we tested the algorithm with -100 and achieved results which were closer to the optimum that each channel gets the same Rate but that's not save to use.
+
+
+// calculation

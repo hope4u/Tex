@@ -1,8 +1,8 @@
 \section{MIMO}
-IN the thrive for higher data rates the limits of the basic single Antenna communication channels became obvios. The bandwith limitation due to scarcety and cost and power constraints due to physics and regulations called for different acroaches. MIMO uses the spatial dimension of the channel to further increase reliability and speed.
+IN the thrive for higher data rates the limits of the basic single Antenna communication channels became obvious. The bandwidth limitation due to scarcity and cost and power constraints due to physics and regulations called for different approaches. MIMO uses the spatial dimension of the channel to further increase reliability and speed.
 
 \subsection{from SISO to MIMO}
-We are still using the asumptions of frequency- and time-flat channels. In the SISO case the descrete complex baseband channel tab $h$ characterized the channel sufficiently. If we now use multiple antennas an the transmitter and receiver side of the channel and make sure that they are sufficiently spaced it establishes multiple distinct channels due to small-scale fading processes. In this case our descrete complex basband channel tab $h$ is no longer a single coefficient but a materix $\mathbf{H}\in\mathbb{C}^{N\times M}$ with $M$ number of transmit antennas and $N$ number of receive antennas. 
+We are still using the assumptions of frequency- and time-flat channels. In the SISO case the discrete complex baseband channel tab $h$ characterized the channel sufficiently. If we now use multiple antennas an the transmitter and receiver side of the channel and make sure that they are sufficiently spaced it establishes multiple distinct channels due to small-scale fading processes. In this case our discrete complex baseband channel tab $h$ is no longer a single coefficient but a matrix $\mathbf{H}\in\mathbb{C}^{N\times M}$ with $M$ number of transmit antennas and $N$ number of receive antennas. 
 \begin{equation}
 	\mathbf{H} = \begin{bmatrix}
 		h_{11} & h_{12} & \hdots & h_{1M} \\
@@ -13,75 +13,29 @@ We are still using the asumptions of frequency- and time-flat channels. In the S
 \end{equation}
 
 \\
-//figure
+//figure \\
 the input output relation of a MIMO channel is then written as 
 \begin{equation}
 \mathbf{y}[m] = \mathbf{Hx}[m] + \mathbf{w}[m]
 \end{equation}
 where $\mathbf{x}\in\mathbb{C}^M , \mathbf{y}\in\mathbb{C}^N$ and $\mathbf{w}\sim\mathcal{CN}(0,N_0\mathbf{I}_N)$
 
+
 \subsection{MIMO Capacity}
-
-For a SISO channel in a Rayleigh fading channel we get a bit error rate off
+the capacity of a MIMO channel without any precodeing can be written as:
 \begin{equation}
-	P_b(|h|^2) = 1/2 \erfc{\Biggl(\sqrt{|h|^2\frac{\bar{E_b}}{N_0}}\Biggr)}.
+	C = \log_2{\det{\Biggr[\mathbf{I}_N + \frac{\text{SNR}}{M}\mathbf{HH}^H\Biggl]}}
 \end{equation}
-, if we now send the same signal over $N$ statistically independent channels we get a BER of
-\begin{equation}
-	P_b(|h|^2) = 1/2 \erfc{\Biggl(\sqrt{\sum_{j=1}^N{|h_j|^2\frac{E_s}{N_0}}}\Biggr)}
-\end{equation}
-for the euivalent SISO channel.
-
-\section{Singular Value Decomposition}
-If we are in single user MIMO system and we can assume full CSI (Channel State Information at Transmitter and Receiver) we can fully diagonalize the Channel by using the SVD of $\mathbf{H}$:
-\begin{equation}
-	\mathbf{H} = \mathbf{USV}^H
-\end{equation}
-with $\mathbf{U}$ and $mthbf{V}$ unitary and square and $mathbf{S}$ a diagonal matrix consiting of al singular Values of $mathbf{H}$.\\
-With this knowlage we can multiply our transmit and received vector as follows: $\mathbf{\tilde{y}} = \mathbf{U}^H\mathbf{y} $ and $ \mathbf{\tilde{x}} = \mathbf{Vx}$. and our transmit equation changes as follows: 
-\begin{align}
-	\mathbf{\tilde{y}} &= \mathbf{U}^H\mathbf{y} \\
-	& = \mathbf{U}^H(\mathbf{H\tilde{x} + w}) \\
-	& = \mathbf{U}^H\mathbf{USV}^H\mathbf{\tilde{x}+\tilde{w}}\\
-	& = \mathbf{SV}^H\mathbf{Vx}+\mathbf{\tilde{w}}\\
-	&= \mathbf{Sx + \tilde{w}}.
-\end{align}
-
-Now we have created min(N,M) parallel SISO systems out of our MIMO system. this brings us to the question of how to distribute the transmit power optimally over these systems to acheave the maximal possible ergodic rate.
-\subsection{waterfilling}
-The well known answer to that question is the water filling Solution described in //tsebook as follows:
+with $\text{SNR}$ as total transmit power $P$ over noise power $N_0$.
 
 
-\section{the Receiver}
-In this project we were mainly looking into optimizing on the transmiter side of the channel but the receiver struture has a huge impact at the performance of the system too.
-In this section we will use two different receiver structures:
-\begin{enumerate}
-	\item Linear MMSE Receiver\\
-	//formula
-	\item V-BLAST MMSE or SIC with MMSE (MMSE-SIC)\\
-	//formula (algorithm)\\
-	Generally speaking the SIC receivers provide better Throughput but are more complicated.
-\end{enumerate}
+% For a SISO channel in a Rayleigh fading channel we get a bit error rate off
+% \begin{equation}
+% 	P_b(|h|^2) = 1/2 \erfc{\Biggl(\sqrt{|h|^2\frac{\bar{E_b}}{N_0}}\Biggr)}.
+% \end{equation}
+% , if we now send the same signal over $N$ statistically independent channels we get a BER of
+% \begin{equation}
+% 	P_b(|h|^2) = 1/2 \erfc{\Biggl(\sqrt{\sum_{j=1}^N{|h_j|^2\frac{E_s}{N_0}}}\Biggr)}
+% \end{equation}
+% for the equivalent SISO channel.
 
-\subsection{Linear MMSE}
-\subsection{MMSE-SIC}
-We can use the reult of one decorrelator filter to aid the others which results in a successive cancellation strategy: we decode $x_1[m]$ first and then subtract the decoded stream from the received vector. So the second decoder sees only the interference of the streams $x_3,\dots,x_m$.But be aware of error porpagation, this means that an error in decoder 2 leads to errorous results in all subsequent decoders.\\
-The V-BLAST gives us
-\begin{equation}
-	R<\log_2{\det{\Biggr(\mathbf{I}_N+\frac{1}{N_0}\mathbf{H}\frac{\mathbf{K_x}}{\sigma^2}\mathbf{H}^H\Biggl)}} bits/s/Hz
-\end{equation}
-with $\mathbf{K_x} = \idag{\{P_1,\dots,P_M\}}$ as the convariance matrix of the transmitted signal. Which leads to a capacity of
-\begin{equation}
-	C = \max_{\Tr{|\mathbf{K_x}|}\leq P}{\mathbb{E}\Biggr[\log_2{\det{\Biggr(\mathbf{I}_N+\frac{1}{N_0}\mathbf{H}\frac{\mathbf{K_x}}{\sigma^2}\mathbf{H}^H\Biggl)}}\Biggl]}
-\end{equation}
-which is the capacity of the fas fading MIMO channel.\\
-in the case of CSIT we already discussed the optimal solution as the waterfilling. But with only CSIR //tse proves that an equal Power allocation, in other words equal power on each transmit antenna gives us the best pervormance
-\begin{equation}
-	\mathbf{K_x} = \Biggr(\frac{P}{M}\Biggl)\mathbf{I}_N
-\end{equation}
-wich gives us a resulting capacity of
-\begin{equation}
-	C = \mathbb{E}\Biggr[\log_2{\det{\Biggr(\mathbf{I}_N+\frac{
-	\text{SNR}}{M}\mathbf{HH}^H\Biggl)}}\Biggl].
-\end{equation}
-We see a power loss in comparison to full CSI of $M$ which is acheaved by using transmit beamfroming.
