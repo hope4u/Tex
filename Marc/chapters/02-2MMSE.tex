@@ -39,15 +39,73 @@ Adaptive Step size means, that for each iteration we search the optimal step siz
 	If next Point is worse than last, decrease step size
 	Stop if increasing or decreasing does not improve the result anymore
 \end{algorithm}
-With this Algorithm we can prevent any fluctuation in the gradient and force it to go the fastest possible way. We do not have to calculate the gradient as often and can thus reduce the needed calculation time. Another nice side effect is, that we implicitly know when we reached the maximum or minimum when the step size is decreased to zero without finding any better points than the previous.
+With this Algorithm we can prevent any fluctuation in the gradient and force it to go the fastest possible way. We do not have to calculate the gradient as often and can thus reduce the needed calculation time. Another nice side effect is, that we implicitly know that we reached the maximum or minimum when the step size is decreased to zero without finding any better points than the previous one.
 
 \subsection{max sumRate}
-
-// calculation
+To find the maximal possible and feasible throughput with a given channel matrix $\mathbf{H}$ we can optimize the sumrate with a gradient search algorithm.\\
+We Optimize
+\begin{equation}
+	\mathbf{P} = \arg{\max_{\trace{\mathbf{P}}\leq P, p_k\geq 0\,\forall p_k\in \diag{\mathbf{P}}}{\sum_k{R}}}
+\end{equation}
+for a given total power $P$ so that the diagonal power allocation matrix $\mathbf{P}$ is positive-semidefinite e.g. has no negative entries.\\
+The gradient search step
+\begin{equation}
+	\mathbf{P}^{n+1} = \mathbf{P}^n + \mu \nabla \text{sumRate}(\mathbf{P})
+\end{equation}
+where $(\cdot)^n$ denotes the $n$-th iteration of the search algorithm and $\mu$ an arbitrary step size.\\
+We now calculate the gradient of
+\begin{equation}
+	\bigr\Vert{(R(\mathbf{P}))\bigl\Vert}_P = \Biggr(\sum_k{(R_k)^p}\Biggl)^{1/p}.
+\end{equation}
+Using the norm gives us the possibility to reuse the same calculation later for the throughput equalization (max minRate).
+We know that the gradient is calculated as 
+\begin{align}
+	\nabla \bigr\Vert{(R(\mathbf{P}))\bigl\Vert}_P &= \nabla \Biggr[ \Biggr(\sum_k{(R_k)^p}\Biggl)^{1/p} \Biggl]\\
+	&= \begin{bmatrix}
+		\partial_{p_1}\\\partial_{p_2}\\\vdots\\\partial_{p_M}
+	\end{bmatrix}
+	\cdot \Biggr(\sum_k{(R_k)^p}\Biggl)^{1/p}
+\end{align}
+but first we need to convert our bounded optimization problem into an unbounded one. First to guarantee $p_k \geq 0 \, \forall k\in\diag{\mathbf{P}}$ we can introduce a diagonal matrix $\mathbf{X}$ as $x_k^2 = p_k$ with $x_k$ is the $k$-th diagonal element of $\mathbf{X}$. Secondly we need to guarantee $\trace{\mathbf{P}}\leq P$ to achieve this we tighten the condition to $\trace{\mathbf{P}}= P$.
+\begin{align}
+	R_k &= -\log_2\Biggr(\mathbf{\Phi}_{k,k}^{-1}\Biggl)\\
+	&= -\log_2\Biggr(\biggr[ \sqrt{\mathbf{P}}\mathbf{H}^H\frac{1}{\sigma^2}\mathbf{H}\sqrt{\mathbf{P}} + \mathbf{I_M} \biggl]_{k,k}^{-1}\Biggl)\\
+	&= -\log_2\Biggr(\biggr[ \sqrt{\mathbf{P} \frac{P}{\trace{\mathbf{P}}}}\mathbf{H}^H\frac{1}{\sigma^2}\mathbf{H} \sqrt{\mathbf{P} \frac{P}{\trace{\mathbf{P}}}} + \mathbf{I_M} \biggl]_{k,k}^{-1}\Biggl)\\
+	&= -\log_2\Biggr(\biggr[ \mathbf{X} \sqrt{\frac{P}{\trace{\mathbf{X}^2}}} \mathbf{H}^H\frac{1}{\sigma^2}\mathbf{H} \mathbf{X} \sqrt{\frac{P}{\trace{\mathbf{X}^2}}} + \mathbf{I_M} \biggl]_{k,k}^{-1}\Biggl)\\
+	&= -\log_2\Biggr(\biggr[\frac{P}{\trace{\mathbf{X}^2}} \mathbf{X}\mathbf{H}^H\frac{1}{\sigma^2}\mathbf{H} \mathbf{X} + \mathbf{I_M} \biggl]_{k,k}^{-1}\Biggl)
+\end{align}
+We can calculate the partial derivatives of the Rates as follows:
+\begin{align}
+	\partial_{x_j} \bigr\Vert{(R(\mathbf{P}))\bigl\Vert}_P
+	&=\partial_{x_j}\Biggr[\Biggr(\sum_k{(R_k)^p}\Biggl)^{1/p}\Biggl]\\
+	&=\frac{1}{p}\Biggr(\sum_k{(R_k)^p}\Biggl)^{1/p-1} \cdot \sum_k{\Biggr[p(R_k)^{p-1} \cdot \partial_{x_j}(R_k)\Biggl]}.
+\end{align}
+The partial derivative of the $k$-th users Rate $R_k$ is calculated as
+\begin{align}
+	\partial_{x_j}(R_k) &= \partial_{x_j}\bigr(-\log_2{\mathbf{\Phi}_{k.k}^{-1}}\bigl)\\
+	&=\frac{-1}{\log{2}}\frac{1}{\mathbf{\Phi}_{k,k}^{-1}} \cdot \partial_{x_j}\bigr(\mathbf{\Phi}_{k,k}^{-1}\bigl)
+\end{align}
+and the derivative of the of the inverse matrix $\mathbf{\Phi}$
+\begin{equation}
+	\partial_{x_j}\bigr(\mathbf{\Phi}_{k,k}^{-1}\bigl) = \Biggr(-\mathbf{\Phi}^{-1} \cdot \partial_{x_j}\bigr(\mathbf{\Phi}^{-1}\bigl) \cdot \mathbf{\Phi}^{-1}\Biggl)_{k,k}.
+\end{equation}
+With
+\begin{align}
+	\partial_{x_j}\bigr(\mathbf{\Phi}^{-1}\bigl) &= \partial_{x_j} \biggr(\frac{P}{\trace{\mathbf{X}^2}} \mathbf{X}\mathbf{H}^H\frac{1}{\sigma^2}\mathbf{H} \mathbf{X} + \mathbf{I_M} \biggl)\\
+	&= \partial_{x_j} \biggr(\frac{P}{\trace{\mathbf{X}^2}} \mathbf{X}\mathbf{H}^H\frac{1}{\sigma^2}\mathbf{H} \mathbf{X}\biggl)\\
+	&= P \cdot \partial_{x_j} \biggr(\frac{ \mathbf{X}\mathbf{H}^H\frac{1}{\sigma^2}\mathbf{H} \mathbf{X} }{\trace{\mathbf{X}^2}}\biggl)\\
+	&= P \cdot \Biggr(\frac{\partial_{x_j}\bigr(\mathbf{X}\mathbf{H}^H\frac{1}{\sigma^2}\mathbf{H}\mathbf{X}\bigl)}{\trace{\mathbf{X}^2}} - \frac{\mathbf{X}\mathbf{H}^H\frac{1}{\sigma^2}\mathbf{H}\mathbf{X} \cdot \partial_{x_j}\bigr(\trace{\mathbf{X}^2}\bigl)}{\bigr(\trace{\mathbf{X}^2}\bigl)^2}\Biggl)\\
+\end{align}
+and since
+\begin{align}
+	\partial_{x_j}\bigr(\mathbf{X}\mathbf{H}^H\frac{1}{\sigma^2}\mathbf{H}\mathbf{X}\bigl) &= \mathbf{E}_{j,j}\mathbf{H}^H\frac{1}{\sigma^2}\mathbf{HX} + \mathbf{XH}^H\frac{1}{\sigma^2}\mathbf{HE}_{j,j}\\
+	\partial_{x_j}\bigr(\trace{\mathbf{X}^2}\bigl) &= 2\mathbf{XE}_{j,j}
+\end{align}
+it all combines together to
+\begin{equation}
+	\partial_{x_j}(R_k) = \frac{-1}{\log{2}}\frac{1}{\mathbf{\Phi}_{k,k}^{-1}} \cdot P \cdot \Biggr(\frac{\mathbf{E}_{j,j}\mathbf{H}^H\frac{1}{\sigma^2}\mathbf{HX} + \mathbf{XH}^H\frac{1}{\sigma^2}\mathbf{HE}_{j,j}}{\trace{\mathbf{X}^2}} - \frac{\mathbf{X}\mathbf{H}^H\frac{1}{\sigma^2}\mathbf{H}\mathbf{X} \cdot 2\mathbf{XE}_{j,j}}{\bigr(\trace{\mathbf{X}^2}\bigl)^2}\Biggl).
+\end{equation}
 
 \subsection{max minRate}
 // calculations: formulas step by step\\
 Implementation with the norm and not just the sum allows us to use the same function in two different ways. Firstly with a //p value of 1, we just calculate the sum Rate for the throughput maximization or sum Rate maximization. Secondly we can set the //p value to something very small like -30 to create a max-min optimizer. The Optimum would be the //min norm but this is not feasible in the numerical domain and is prone to get stuck in local minimas, here -30 is a good approximation, we tested the algorithm with -100 and achieved results which were closer to the optimum that each channel gets the same Rate but that's not save to use.
-
-
-// calculation

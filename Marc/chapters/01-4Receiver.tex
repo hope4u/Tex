@@ -13,10 +13,9 @@ In this section we will use two different receiver structures:
 The goal of the MMSE equalizer is to minimize the mean error at the filter output. We use $\mathbf{K}_y = \mathbf{HH}^H + \mathbf{K}_n$ and equal power allocation at the transmitter. Then we can write the error covariance matrix as
 \begin{align}
 	\mathbf{K}_e &= \mathbf{GK}_y\mathbf{G}^H - \mathbf{GH} - \mathbf{H}^H\mathbf{G}^H + \mathbf{I}_N\\
-	&=\Biggr(\mathbf{GK}_y - \mathbf{H}^H\Biggl) \mathbf{K}_y^{-1} \Biggr(\mathbf{GK}_y - \mathbf{H}^H\Biggl)^H - \mathbf{H}^H\mathbf{K}_y^{-1}\mathbf{H}+\mathbf{I}_N\\
+	&=\Biggr(\mathbf{GK}_y - \mathbf{H}^H\Biggl) \mathbf{K}_y^{-1} \Biggr(\mathbf{GK}_y - \mathbf{H}^H\Biggl)^H - \mathbf{H}^H\mathbf{K}_y^{-1}\mathbf{H}+\mathbf{I}_N.
 \end{align}
-and since $\mathbf{K}_y$ is a non-negative definite matrix we need to minimize $\mathbf{GK}_y - \mathbf{H}^H\bigl = \mathbf{0}$
-with $\mathbf{K}_y = \sigma_n^2\mathbf{I}_N$. This leads us to the filter matrix $\mathbf{G}$ as
+and since $\mathbf{K}_y$ is a non-negative definite matrix we need to minimize $\mathbf{GK}_y-\mathbf{H}^H\bigl=\mathbf{0}$ with $\mathbf{K}_y = \sigma_n^2\mathbf{I}_N$. This leads us to the filter matrix $\mathbf{G}$ as
 \begin{align}
 	\mathbf{G} &= \mathbf{H}^H\mathbf{K}_y^{-1}\\
 	&= \mathbf{H}^H\Biggr(\mathbf{HH}^H + \sigma_n^2\mathbf{I}_N\Biggl)^{-1}\\
@@ -42,7 +41,7 @@ The V-BLAST gives us
 \begin{equation}
 	R<\log_2{\det{\Biggr(\mathbf{I}_N+\frac{1}{N_0}\mathbf{H}\mathbf{K_x}\mathbf{H}^H\Biggl)}} bits/s/Hz
 \end{equation}
-with $\mathbf{K_x} = \idag{\{P_1,\dots,P_M\}}$ as the covariance matrix of the transmitted signal. Which leads to a capacity of
+with $\mathbf{K_x} = \diag{P_1,\dots,P_M}$ as the covariance matrix of the transmitted signal. Which leads to a capacity of
 \begin{equation}
 	C = \max_{\Tr{|\mathbf{K_x}|}\leq P}{\log_2{\det{\Biggr(\mathbf{I}_N+\frac{1}{N_0}\mathbf{H}\mathbf{K_x}\mathbf{H}^H\Biggl)}}} bits/s/Hz
 \end{equation}
