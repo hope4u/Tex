@@ -1,3 +1,61 @@
+\section{Waterfilling}
+If full CSI and full inter antenna coordination e.g. power and data can be freely distributed over all transmit antennas there is a single easy to calculate optimal solution; water-filling. Water filling is designed to diagonalize the channel with help of the SVD. one huge drawback to it is that we need the antenna coordination on the transmitter side, so it is only hardly feasible for a multiuser case.\\
+As mentioned water-filling starts with the SVD of the channel $\mathbf{H} = \mathbf{USV}^H$. It then uses $\mathbf{\tilde{x}} = \mathbf{Vx}$ and $\mathbf{\tilde{y}} = \mathbf{U}^H\mathbf{y}$ to rotate the transmit and receive vectors. $\mathbf{\tilde{w}} = \mathbf{U}^H\mathbf{w}$ is the rotate noise vector.
+\begin{equation}
+	\mathbf{\tilde{y}} 
+	= \mathbf{U}^H\mathbf{USV}^H\mathbf{Vx}+\mathbf{U}^H\mathbf{w}}
+	= \mathbf{Sx + \tilde{w}}.
+\end{equation}
+Now we have multiple parallel SISO "eigen-subchannel" systems. The waterfilling now says how to distribute the transmit power $P_{tot}$ over the different subchannels. The idea is to give the "strongest" channel the most power and the "weakest" the least amount.\\
+
+// picture
+
+The question to answer how to distribute the power to maximize throughput $C$:
+\begin{equation}
+	\begin{aligned}
+		& \underset{\mathbf{P}}{\text{maximize}}
+		& & \sum_k{\log_2{\Biggr(1+\frac{P_k|\tilde{h}_k|}{N_0}\Biggl)}} \\
+		& \text{subject to}
+		& & P_k\geq 0,\,\forall P_k\in \diag{\mathbf{P}}, \\
+		&&& \trace{\mathbf{P}}\leq P_{tot}.
+	\end{aligned}
+\end{equation}
+with noise Power $N_0$ and $\tilde{h}_k$ the complex channel gain of subchannel $k$
+We define $(\cdot)^+ := \max{\cdot,0}$ the power allocation
+\begin{equation}
+	P_k^* = \Biggr(\frac{1}{\lambda}-\frac{N_0}{|\tilde{h}_k|^2}\Biggl)^+
+\end{equation}
+with the water-level $\lambda$ chosen such that the power constraint is met
+\begin{equation}
+	\frac{1}{M}\sum_{k=1}^M{\Biggr(\frac{1}{\lambda}-\frac{N_0}{|\tilde{h}_k|^2}\Biggl)^+}
+\end{equation}
+
 \section{Multiuser Case}
-Since Water Filling diagonalizes the channel it does not matter what kind of decoder is used on the receiver side, the streams are already independent. But Waterfilling is only feasible in a single user case with full CSIT due to the fact that inter antenna data coordination is needed. So in a multi user scenario we need other methods to decode the channel.
-We use two well-known Receiver structures:
+If antenna coordination is not possible for example in a multiuser environment the water filling solution is not reachable. Jindal proposes an algorithm his calling iterative waterfilling. The goal of this algorithm is to calculate the effective noise (Gaussian noise plus interference) for each user and then use water filling over these adapted channels. But since changing the power of one user changes the effective noise of all other users its mandatory to iterate until the algorithm converges. His algorithm optimizes with respect to an SIC receiver.
+The papers goal is to solve the problem of beam-forming in a broadcast(BC) or downlink channel, so exactly the opposite direction than we are discussing in this report. But as //paper describes there is a duality of these two channels and we are able to use the optimized results of the multiple access channel (MAC) or uplink-channel to optimize the BC. His work is using this duality to solve the easier problem of the MAC and then transform it back to the BC problem, ant thus solving the throughput maximization problem for the multiuser case.
+
+\begin{enumerate}
+	\item[init] with $\mathbf{Q^{(0}}=\mathbf{0}$
+	\item Generate effective channels for each user
+		\begin{equation}
+			\mathbf{G}_k^{(n)}=\mathbf{H}_k\Biggr(\mathbf{I}+\sum_{j\neq k}{\mathbf{H}_j^H\mathbf{Q}_k^{(n-1)}\mathbf{H}_j}\Biggl)^{-1/2}
+		\end{equation}
+	\item Treating these effective channels as parallel, noniterfering channels and obtain covariance matrices $\mathbf{S}_k^{(n)}$ by waterfilling with total power $P_{ot}$
+		\begin{equation}
+			\begin{aligned}
+				& \underset{\mathbf{\mathbf{S}_k}}{\text{maximize}}
+				& & \sum_k{\log_2{\Biggr(\mathbf{I}+\Bigr(\mathbf{G}_k^{(n)}\Bigl)^H\mathbf{S}_k\mathbf{G}_k^{(n)}\Biggl)}} \\
+				& \text{subject to}
+				& & \mathbf{S}_k \geq 0,\\
+				&&& \sum_k{\trace{\mathbf{S}_k}}\leq P_{tot}.
+			\end{aligned}
+		\end{equation}
+	\item Compute the updated covariance matrices $\mathbf{Q}_k^{(n)}$ as
+		\begin{equation}
+			\mathbf{Q}_k^{(n)} = \frac{1}{M}\mathbf{S}_k^{(n)}+\frac{M-1}{M}\mathbf{Q}_k^{(n-1)}
+		\end{equation}
+	where $M$ is the number of users.
+\end{enumerate}
+
+
+// figure (compare wf to iwf to equal power allocation)

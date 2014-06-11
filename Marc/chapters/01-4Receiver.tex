@@ -1,28 +1,27 @@
 \section{the Receiver}
-In this project we were mainly looking into optimizing on the transmitter side of the channel but the receiver structure has a huge impact at the performance of the system too.
+In this project we were mainly looking into optimization on the transmitter side of the channel but the receiver structure has a huge impact at the performance of the system too.
 In this section we will use two different receiver structures:
 \begin{enumerate}
 	\item Linear MMSE Receiver\\
-	//formula
+	Linear receiver with the lowest possible error.
 	\item V-BLAST MMSE or SIC with MMSE (MMSE-SIC)\\
-	//formula (algorithm)\\
 	Generally speaking the SIC receivers provide better Throughput but are more complicated.
 \end{enumerate}
 
 \subsection{Linear MMSE}
-The goal of the MMSE equalizer is to minimize the mean error at the filter output. We use $\mathbf{K}_y = \mathbf{HH}^H + \mathbf{K}_n$ and equal power allocation at the transmitter. Then we can write the error covariance matrix as
+The goal of the MMSE equalizer is to minimize the mean error at the filter output. We use $\mathbf{K}_y = \mathbf{HK}_x\mathbf{H}^H + \mathbf{K}_n$ and equal power allocation at the transmitter $\mathbf{K}_x = (P/M)\mathbf{I}_N$. Then we can write the error covariance matrix as
 \begin{align}
 	\mathbf{K}_e &= \mathbf{GK}_y\mathbf{G}^H - \mathbf{GH} - \mathbf{H}^H\mathbf{G}^H + \mathbf{I}_N\\
 	&=\Biggr(\mathbf{GK}_y - \mathbf{H}^H\Biggl) \mathbf{K}_y^{-1} \Biggr(\mathbf{GK}_y - \mathbf{H}^H\Biggl)^H - \mathbf{H}^H\mathbf{K}_y^{-1}\mathbf{H}+\mathbf{I}_N.
 \end{align}
-and since $\mathbf{K}_y$ is a non-negative definite matrix we need to minimize $\mathbf{GK}_y-\mathbf{H}^H\bigl=\mathbf{0}$ with $\mathbf{K}_y = \sigma_n^2\mathbf{I}_N$. This leads us to the filter matrix $\mathbf{G}$ as
+and since $\mathbf{K}_y$ is a non-negative definite matrix we need to minimize $\mathbf{GK}_y-\mathbf{H}^H\bigl=\mathbf{0}$ with $\mathbf{K}_n = \sigma_n^2\mathbf{I}_N$. This leads us to the filter matrix $\mathbf{G}$ as
 \begin{align}
 	\mathbf{G} &= \mathbf{H}^H\mathbf{K}_y^{-1}\\
 	&= \mathbf{H}^H\Biggr(\mathbf{HH}^H + \sigma_n^2\mathbf{I}_N\Biggl)^{-1}\\
 	&=\Biggr(\mathbf{HH}^H + \sigma_n^2\mathbf{I}_N\Biggl)^{-1}\mathbf{H}^H.
 \end{align}
 where the last equation uses the matrix inversion lemma.\\
-Now we use $\tilde{x} = \mathbf{Gy}$ to estimate the sent vector $\mathbf{x}$. This gives us
+Now we use $\mathbf{\tilde{x}} = \mathbf{Gy}$ to estimate the sent vector $\mathbf{x}$. This gives us
 \begin{equation}
 	\mathbf{K}_{e,MMSE} = \mathbf{I}_N - \mathbf{H}^H\mathbf{K}_y^{-1}\mathbf{H} = \sigma_n^2\Biggr(\mathbf{H}^H\mathbf{H} + \sigma_n^2\mathbf{I}_N\Biggl)^{-1}
 \end{equation}
@@ -30,7 +29,7 @@ for the error covariance matrix and a channel capacity of
 \begin{equation}
 	C = -\sum_{i=1}^{N}{\log_2{\Biggr(\Bigr[\mathbf{K}_{e,MMSE}\Bigl]_{i,i}^{-1}\Biggl)}}.
 \end{equation}
-The corresponding per-user SINR is then calculated with
+The corresponding per-user SINR in dB is then calculated with
 \begin{equation}
 	\text{SINR}_{i} = \frac{1}{\Bigr[\mathbf{K}_{e,MMSE}\Bigl]_{i,i}^{-1}} - 1.
 \end{equation}
@@ -39,23 +38,23 @@ The corresponding per-user SINR is then calculated with
 We can use the result of one decorrelator filter to aid the others which results in a successive cancellation strategy: we decode $x_1[m]$ first and then subtract the decoded stream from the received vector. So the second decoder sees only the interference of the streams $x_3,\dots,x_m$.But be aware of error propagation, this means that an error in decoder 2 leads to erroneous results in all subsequent decoders.\\
 The V-BLAST gives us
 \begin{equation}
-	R<\log_2{\det{\Biggr(\mathbf{I}_N+\frac{1}{N_0}\mathbf{H}\mathbf{K_x}\mathbf{H}^H\Biggl)}} bits/s/Hz
+	R<\log_2{\det{\Biggr(\mathbf{I}_N+\frac{1}{N_0}\mathbf{H}\mathbf{K_x}\mathbf{H}^H\Biggl)}} \text{     bits/s/Hz}
 \end{equation}
 with $\mathbf{K_x} = \diag{P_1,\dots,P_M}$ as the covariance matrix of the transmitted signal. Which leads to a capacity of
 \begin{equation}
-	C = \max_{\Tr{|\mathbf{K_x}|}\leq P}{\log_2{\det{\Biggr(\mathbf{I}_N+\frac{1}{N_0}\mathbf{H}\mathbf{K_x}\mathbf{H}^H\Biggl)}}} bits/s/Hz
+	C = \max_{\Tr{|\mathbf{K_x}|}\leq P}{\log_2{\det{\Biggr(\mathbf{I}_N+\frac{1}{N_0}\mathbf{H}\mathbf{K_x}\mathbf{H}^H\Biggl)}}} \text{     bits/s/Hz}
 \end{equation}
-which is the capacity of the fas fading MIMO channel.\\
-in the case of CSIT we already discussed the optimal solution as the waterfilling. But with no CSI on the transmitter side //tse proves that an equal Power allocation, in other words equal power on each transmit antenna, gives us the best performance
+which is the capacity of the fast fading MIMO channel.\\
+In the case of CSIT we will discuss the optimal solution as the waterfilling solution later. But with no CSI on the transmitter side //tse proves that an equal Power allocation, in other words equal power on each transmit antenna, gives us the best performance
 \begin{equation}
 	\mathbf{K_x} = \Biggr(\frac{P}{M}\Biggl)\mathbf{I}_N
 \end{equation}
 which gives us a resulting capacity of
 \begin{equation}
-	C =\log_2{\det{\Biggr(\mathbf{I}_N+\frac{
-	\text{SNR}}{M}\mathbf{HH}^H\Biggl)}}.
+	C =\log_2{\det{\Biggr(\mathbf{I}_N+\frac{\text{SNR}}{M}\mathbf{HH}^H\Biggl)}} \text{     bits/s/Hz}
 \end{equation}
-We see a power loss in comparison to full CSI of $M$ which is achieved by using transmit beaming.\\
+where $\text{SNR} = P/N_0$ the transmit power over the noise power at the receiver.
+We see a power loss in comparison to full CSI of $M$ which is achieved by using transmit beam-forming.\\
 In general the decoding order of a this SIC receivers has no impact on the performance, but in our work we always decode the channel which provides the highest MMSE-SINR first. With this decoding order we can guarantee a solution for the later discussed max-min algorithm.
 // picture\\
 // code

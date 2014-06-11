@@ -24,3 +24,54 @@
 \end{enumerate}
 
 \subsection{analytical gradient}
+We calculate the power minimization on the basis of the analytical gradient for throughput maximization.
+\begin{equation}
+	\mathbf{P} = \arg{\min_{\begin{matrix}
+		P_k\geq 0\,\forall P_k\in \diag{\mathbf{P}}\\
+		R_k = R_{tgt}\,\forall k
+		\end{matrix}}{\sum_k{P_k}}}
+\end{equation}The idea here was to minimize the difference between the target Rates and the calculated rate for the channel, only by changing the diagonal Values of $\mathbf{P}$.
+So our problem gets reformed into
+\begin{equation}
+	\mathbf{P} = \arg{\max_{P_k\geq 0\,\forall P_k\in \diag{\mathbf{P}}}{\sum_k{\bigr(R_k-R_{tgt}\bigl)}}}
+\end{equation}
+Again we use $\mathbf{X}^2 = \mathbf{P}$ to make sure to only get positive power Values but since we do not care about some power power budget $P_{tot}$ we can removed the condition $\trace{\mathbf{P}}\leq P_{tot}$. $\mathbf{\Phi}$ then becomes
+\begin{equation}
+	\mathbf{\Phi} = \mathbf{X}\mathbf{H}^H\frac{1}{\sigma^2}\mathbf{H} \mathbf{X} + \mathbf{I_M}
+\end{equation}
+and the for the Rate of user $k$
+\begin{equation}
+	R_k = -\log_2\Biggr(\mathbf{\Phi}_{k,k}^{-1}\Biggl) = -\log_2\Biggr(\biggr[\mathbf{X}\mathbf{H}^H\frac{1}{\sigma^2}\mathbf{H} \mathbf{X} + \mathbf{I_M} \biggl]_{k,k}^{-1}\Biggl)
+\end{equation}
+With $p=2$ we calculate the distance such that the sign does not mess up the gradient and the norm to be able to reuse the code from the throughput maximization algorithm, we get:
+\begin{equation}
+	\nabla \bigr\Vert{(R(\mathbf{P}))\bigl\Vert}_2 = \nabla \Biggr[ \Biggr(\sum_k{(R_k-R_{tgt})^2}\Biggl)^{1/2} \Biggl]
+\end{equation}
+and for the partial derivative
+\begin{align}
+	\partial_{x_j} \bigr\Vert{(R(\mathbf{P}))\bigl\Vert}_2
+	&=\partial_{x_j}\Biggr[\Biggr(\sum_k{(R_k-R_{tgt})^2}\Biggl)^{1/2}\Biggl]\\
+	&=\frac{1}{2}\Biggr(\sum_k{(R_k-R_{tgt})^2}\Biggl)^{-1/2} \cdot \sum_k{\Biggr[2(R_k-R_{tgt}) \cdot \partial_{x_j}(R_k-R_{tgt})\Biggl]}.
+\end{align}
+where
+\begin{align}
+	\partial_{x_j}(R_k-R_{tgt}) &= \partial_{x_j}(R_k)\\
+	&= \partial_{x_j}\bigr(-\log_2{\mathbf{\Phi}_{k.k}^{-1}}\bigl)\\
+	&=\frac{-1}{\log{2}}\frac{1}{\mathbf{\Phi}_{k,k}^{-1}} \cdot \partial_{x_j}\bigr(\mathbf{\Phi}_{k,k}^{-1}\bigl)
+\end{align}
+\begin{equation}
+	\partial_{x_j}\bigr(\mathbf{\Phi}_{k,k}^{-1}\bigl) = \Biggr(-\mathbf{\Phi}^{-1} \cdot \partial_{x_j}\bigr(\mathbf{\Phi}^{-1}\bigl) \cdot \mathbf{\Phi}^{-1}\Biggl)_{k,k}.
+\end{equation}
+and the derivative of $\mathbf{\Phi}$ as
+\begin{align}
+	\partial_{x_j}\bigr(\mathbf{\Phi}^{-1}\bigl) &= \partial_{x_j} \biggr(\mathbf{X}\mathbf{H}^H\frac{1}{\sigma^2}\mathbf{H} \mathbf{X} + \mathbf{I_M} \biggl)\\
+	&= \partial_{x_j} \biggr(\mathbf{X}\mathbf{H}^H\frac{1}{\sigma^2}\mathbf{H} \mathbf{X}\biggl)\\
+	&= \mathbf{E}_{j,j}\mathbf{H}^H\frac{1}{\sigma^2}\mathbf{HX} + \mathbf{XH}^H\frac{1}{\sigma^2}\mathbf{HE}_{j,j}
+\end{align}
+and finally
+\begin{equation}
+	\begin{split}
+		\partial_{X_j}(R_k) = \frac{1}{2}\Biggr(\sum_k{(R_k-R_{tgt})^2}\Biggl)^{-1/2}\cdot\sum_k{\Biggr[2(R_k-R_{tgt})\cdot\frac{1}{\log{2}\cdot\mathbf{\Phi}_{k,k}^{-1}}\cdot\\
+		\cdot\Biggr(-\mathbf{\Phi}^{-1} \cdot \mathbf{E}_{j,j}\mathbf{H}^H\frac{1}{\sigma^2}\mathbf{HX} + \mathbf{XH}^H\frac{1}{\sigma^2}\mathbf{HE}_{j,j}\Biggl) \cdot \mathbf{\Phi}^{-1}\Biggl)_{k,k}\Biggl]}.
+	\end{split}
+\end{equation}

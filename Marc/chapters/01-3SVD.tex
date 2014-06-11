@@ -1,10 +1,10 @@
 \section{Singular Value Decomposition}
-If we are in single user MIMO system and we can assume full CSI (Channel State Information at Transmitter and Receiver) we can fully diagonalize the Channel by using the SVD of $\mathbf{H}$:
+If we are in single user MIMO system and we can assume CSIT/R (Channel State Information at Transmitter and Receiver) we can fully diagonalize the channel by using the SVD of $\mathbf{H}$:
 \begin{equation}
 	\mathbf{H} = \mathbf{USV}^H
 \end{equation}
 with $\mathbf{U}$ and $\mathbf{V}$ unitary and square and $\mathbf{S}$ a diagonal matrix consisting of all singular Values of $\mathbf{H}$.\\
-With this knowledge we can multiply our transmit and received vector as follows: $\mathbf{\tilde{y}} = \mathbf{U}^H\mathbf{y} $ and $ \mathbf{\tilde{x}} = \mathbf{Vx}$. and our transmit equation changes as follows: 
+With this knowledge we can multiply our transmit and received vector as follows: $\mathbf{\tilde{y}} = \mathbf{U}^H\mathbf{y} $ and $ \mathbf{\tilde{x}} = \mathbf{Vx}$ and our system equation changes as follows: 
 \begin{align}
 	\mathbf{\tilde{y}} &= \mathbf{U}^H\mathbf{y} \\
 	& = \mathbf{U}^H(\mathbf{H\tilde{x} + w}) \\
@@ -14,5 +14,3 @@ With this knowledge we can multiply our transmit and received vector as follows:
 \end{align}
 
 Now we have created min(N,M) parallel SISO systems out of our MIMO system. this brings us to the question of how to distribute the transmit power optimally over these systems to achieve the maximal possible ergodic rate.
-\subsection{waterfilling}
-The well known answer to that question is the water filling Solution described in //tsebook as follows:

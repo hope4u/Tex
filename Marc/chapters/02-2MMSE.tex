@@ -2,25 +2,42 @@
 \subsection{gradient Search}
 
 The idea of the steepest descent algorithm is to find the global maximum or minimum of a function by searching along the gradient of the function.
-\begin{algorithm}
-	1.	Start at one point
-	2.	Calculate the Gradient
-	3.	Use the gradient to get to the next point (Step)
-	4.	Iterate
-\end{algorithm}
+\begin{algorithmic}
+	\STATE initialize $x^{(0)}$
+	\REPEAT
+	\STATE calculate $x^{(n+1)}=x^{(n)}-\mu\nabla f(x^{(n)})$ with $\mu$ an arbitrary step size.
+	\UNTIL{$\nabla f(x^{(n)} = 0$}
+\end{algorithmic}
 We used two ways to calculate the gradient at a certain point, numerical and analytical:
 
 \subsubsection{Numerical Gradient}
 The numerical Algorithm calculates the Gradient with numerical means. Which means to increase the input in each dimension one after another by a very small amount and recalculate output. With both results, the original one and the new ones, we can approximate the local gradient very precisely.
-\begin{algorithm}
-	1.	Calculate Starting Point
-	2.	1:K 
-	a.	Increase input K
-	b.	Calculate Point
-	3.	Calculate Gradient
-	4.	Step to next point
-	5.	Iterate
-\end{algorithm}
+\begin{algorithmic}
+	\STATE initialize $\mathbf{X}^{(0)}$
+	\REPEAT
+		\FOR{$k=1$ to $M$}
+		\STATE $\mathbf{X}_e = \mathbf{X} + \eta\mathbf{E}_{k,k}$
+		\STATE $\partial_{X_k}(f(\mathbf{X}^{(n)}) = \frac{f(\mathbf{X}^{(n)}-f(\mathbf{X}_e)}{\eta}$
+		\ENDFOR
+		\STATE 
+		\begin{flalign*}
+			\mathbf{X}^{(n+1)}=\mathbf{X}^{(n)}-\mu
+			\begin{bmatrix}
+				\partial_{X_1}(f(\mathbf{X}^{(n)}))\\
+				\partial_{X_2}(f(\mathbf{X}^{(n)})) \\
+				\vdots\\
+				\partial_{X_M}(f(\mathbf{X}^{(n)}))
+			\end{bmatrix}
+		\end{flalign*}
+	\UNTIL{$\nabla f(\mathbf{X}^{(n)} = 0$}
+1.	Calculate Starting Point
+2.	1:K 
+a.	Increase input K
+b.	Calculate Point
+3.	Calculate Gradient
+4.	Step to next point
+5.	Iterate
+\end{algorithmic}
 \subsubsection{Analytical Gradient}
 The analytical Algorithm on the other hand uses analytical tools to calculate the gradient form the known function in advance. It uses the gradient function to calculate the exact gradient at each point.
 \begin{algorithm}
@@ -30,7 +47,7 @@ The analytical Algorithm on the other hand uses analytical tools to calculate th
 	3.	Iterate
 \end{algorithm}
 
-\subsubsection{optimizing algorithm}
+\subsubsection{optimizing the algorithm}
 One Problem that occurred during the simulations was that at some point the gradient search got unstable, in our case it started to fluctuate and stopped moving towards the optimum. The reason of this bad and unwanted behavior lies in the step size of the function, and so there are two ways to fix it. The first and easy way is just to reduce the step size and increase the number of iterations accordingly, this way the problem occurs later and weaker and has less impact on the end result. The second much more complicated solution is to introduce adaptive step size.\\
 Adaptive Step size means, that for each iteration we search the optimal step size which allows us to take the biggest step towards our goal. So it should not be possible to choose a step size which gives us a worse result than we had on the iteration before.
 \begin{algorithm}
@@ -41,44 +58,50 @@ Adaptive Step size means, that for each iteration we search the optimal step siz
 \end{algorithm}
 With this Algorithm we can prevent any fluctuation in the gradient and force it to go the fastest possible way. We do not have to calculate the gradient as often and can thus reduce the needed calculation time. Another nice side effect is, that we implicitly know that we reached the maximum or minimum when the step size is decreased to zero without finding any better points than the previous one.
 
-\subsection{max sumRate}
-To find the maximal possible and feasible throughput with a given channel matrix $\mathbf{H}$ we can optimize the sumrate with a gradient search algorithm.\\
+\subsection{Optimize for maximum throughput}
+To find the maximal possible and feasible throughput with a given channel matrix $\mathbf{H}$ we can optimize the sumrate $\sum_k{R_k(\mathbf{P})}$ with a gradient search algorithm.\\
 We Optimize
 \begin{equation}
-	\mathbf{P} = \arg{\max_{\trace{\mathbf{P}}\leq P, p_k\geq 0\,\forall p_k\in \diag{\mathbf{P}}}{\sum_k{R}}}
+	\begin{aligned}
+		& \underset{\mathbf{P}}{\text{maximize}}
+		& & \sum_k{R_k(\mathbf{P})} \\
+		& \text{subject to}
+		& & P_k\geq 0,\,\forall P_k\in \diag{\mathbf{P}}, \\
+		&&& \trace{\mathbf{P}}\leq P.
+	\end{aligned}
 \end{equation}
-for a given total power $P$ so that the diagonal power allocation matrix $\mathbf{P}$ is positive-semidefinite e.g. has no negative entries.\\
-The gradient search step
-\begin{equation}
-	\mathbf{P}^{n+1} = \mathbf{P}^n + \mu \nabla \text{sumRate}(\mathbf{P})
-\end{equation}
-where $(\cdot)^n$ denotes the $n$-th iteration of the search algorithm and $\mu$ an arbitrary step size.\\
+for a given total power $P_{tot}$ so that the diagonal power allocation matrix $\mathbf{P}$ is positive-semidefinite e.g. has no negative entries.\\
 We now calculate the gradient of
 \begin{equation}
-	\bigr\Vert{(R(\mathbf{P}))\bigl\Vert}_P = \Biggr(\sum_k{(R_k)^p}\Biggl)^{1/p}.
+	\bigr\Vert{(R(\mathbf{P}))\bigl\Vert}_p = \Biggr(\sum_k{(R_k(\mathbf{P}))^p}\Biggl)^{1/p}.
 \end{equation}
 Using the norm gives us the possibility to reuse the same calculation later for the throughput equalization (max minRate).
 We know that the gradient is calculated as 
 \begin{align}
-	\nabla \bigr\Vert{(R(\mathbf{P}))\bigl\Vert}_P &= \nabla \Biggr[ \Biggr(\sum_k{(R_k)^p}\Biggl)^{1/p} \Biggl]\\
+	\nabla \bigr\Vert{(R(\mathbf{P}))\bigl\Vert}_p &= \nabla \Biggr[ \Biggr(\sum_k{(R_k(\mathbf{P}))^p}\Biggl)^{1/p} \Biggl]\\
 	&= \begin{bmatrix}
 		\partial_{p_1}\\\partial_{p_2}\\\vdots\\\partial_{p_M}
 	\end{bmatrix}
-	\cdot \Biggr(\sum_k{(R_k)^p}\Biggl)^{1/p}
+	\cdot \Biggr(\sum_k{(R_k(\mathbf{P}))^p}\Biggl)^{1/p}.
 \end{align}
-but first we need to convert our bounded optimization problem into an unbounded one. First to guarantee $p_k \geq 0 \, \forall k\in\diag{\mathbf{P}}$ we can introduce a diagonal matrix $\mathbf{X}$ as $x_k^2 = p_k$ with $x_k$ is the $k$-th diagonal element of $\mathbf{X}$. Secondly we need to guarantee $\trace{\mathbf{P}}\leq P$ to achieve this we tighten the condition to $\trace{\mathbf{P}}= P$.
+This gives us an iterative search algorithm
+\begin{equation}
+	\mathbf{P}^{n+1} = \mathbf{P}^n + \mu \nabla \bigr\Vert{(R(\mathbf{P}))\bigl\Vert}_p
+\end{equation}
+where $(\cdot)^n$ denotes the $n$-th iteration of the search algorithm and $\mu$ an arbitrary step size we set $p = 1$ for $\bigr\Vert{(R(\mathbf{P}))\bigl\Vert}_1 = \sum_k{R}$. 
+But first we need to convert our bounded optimization problem into an unbounded one. First to guarantee $P_k \geq 0 \, \forall k\in\diag{\mathbf{P}}$ we can introduce a diagonal matrix $\mathbf{X}$ as $X_k^2 = P_k$ with $X_k$ is the $k$-th diagonal element of $\mathbf{X}$. Secondly we need to guarantee $\trace{\mathbf{P}}\leq P_{tot}$ to achieve this we tighten the condition to $\trace{\mathbf{P}}= P_{tot}$.
 \begin{align}
 	R_k &= -\log_2\Biggr(\mathbf{\Phi}_{k,k}^{-1}\Biggl)\\
 	&= -\log_2\Biggr(\biggr[ \sqrt{\mathbf{P}}\mathbf{H}^H\frac{1}{\sigma^2}\mathbf{H}\sqrt{\mathbf{P}} + \mathbf{I_M} \biggl]_{k,k}^{-1}\Biggl)\\
-	&= -\log_2\Biggr(\biggr[ \sqrt{\mathbf{P} \frac{P}{\trace{\mathbf{P}}}}\mathbf{H}^H\frac{1}{\sigma^2}\mathbf{H} \sqrt{\mathbf{P} \frac{P}{\trace{\mathbf{P}}}} + \mathbf{I_M} \biggl]_{k,k}^{-1}\Biggl)\\
-	&= -\log_2\Biggr(\biggr[ \mathbf{X} \sqrt{\frac{P}{\trace{\mathbf{X}^2}}} \mathbf{H}^H\frac{1}{\sigma^2}\mathbf{H} \mathbf{X} \sqrt{\frac{P}{\trace{\mathbf{X}^2}}} + \mathbf{I_M} \biggl]_{k,k}^{-1}\Biggl)\\
-	&= -\log_2\Biggr(\biggr[\frac{P}{\trace{\mathbf{X}^2}} \mathbf{X}\mathbf{H}^H\frac{1}{\sigma^2}\mathbf{H} \mathbf{X} + \mathbf{I_M} \biggl]_{k,k}^{-1}\Biggl)
+	&= -\log_2\Biggr(\biggr[ \sqrt{\mathbf{P} \frac{P_{tot}}{\trace{\mathbf{P}}}}\mathbf{H}^H\frac{1}{\sigma^2}\mathbf{H} \sqrt{\mathbf{P} \frac{P_{tot}}{\trace{\mathbf{P}}}} + \mathbf{I_M} \biggl]_{k,k}^{-1}\Biggl)\\
+	&= -\log_2\Biggr(\biggr[ \mathbf{X} \sqrt{\frac{P_{tot}}{\trace{\mathbf{X}^2}}} \mathbf{H}^H\frac{1}{\sigma^2}\mathbf{H} \mathbf{X} \sqrt{\frac{P_{tot}}{\trace{\mathbf{X}^2}}} + \mathbf{I_M} \biggl]_{k,k}^{-1}\Biggl)\\
+	&= -\log_2\Biggr(\biggr[\frac{P_{tot}}{\trace{\mathbf{X}^2}} \mathbf{X}\mathbf{H}^H\frac{1}{\sigma^2}\mathbf{H} \mathbf{X} + \mathbf{I_M} \biggl]_{k,k}^{-1}\Biggl)
 \end{align}
 We can calculate the partial derivatives of the Rates as follows:
 \begin{align}
-	\partial_{x_j} \bigr\Vert{(R(\mathbf{P}))\bigl\Vert}_P
-	&=\partial_{x_j}\Biggr[\Biggr(\sum_k{(R_k)^p}\Biggl)^{1/p}\Biggl]\\
-	&=\frac{1}{p}\Biggr(\sum_k{(R_k)^p}\Biggl)^{1/p-1} \cdot \sum_k{\Biggr[p(R_k)^{p-1} \cdot \partial_{x_j}(R_k)\Biggl]}.
+	\partial_{x_j} \bigr\Vert{(R(\mathbf{P}))\bigl\Vert}_p
+	&=\partial_{x_j}\Biggr[\Biggr(\sum_k{(R_k(\mathbf{P}))^p}\Biggl)^{1/p}\Biggl]\\
+	&=\frac{1}{p}\Biggr(\sum_k{(R_k(\mathbf{P}))^p}\Biggl)^{1/p-1} \cdot \sum_k{\Biggr[p(R_k(\mathbf{P}))^{p-1} \cdot \partial_{x_j}(R_k(\mathbf{P}))\Biggl]}.
 \end{align}
 The partial derivative of the $k$-th users Rate $R_k$ is calculated as
 \begin{align}
@@ -91,10 +114,10 @@ and the derivative of the of the inverse matrix $\mathbf{\Phi}$
 \end{equation}
 With
 \begin{align}
-	\partial_{x_j}\bigr(\mathbf{\Phi}^{-1}\bigl) &= \partial_{x_j} \biggr(\frac{P}{\trace{\mathbf{X}^2}} \mathbf{X}\mathbf{H}^H\frac{1}{\sigma^2}\mathbf{H} \mathbf{X} + \mathbf{I_M} \biggl)\\
-	&= \partial_{x_j} \biggr(\frac{P}{\trace{\mathbf{X}^2}} \mathbf{X}\mathbf{H}^H\frac{1}{\sigma^2}\mathbf{H} \mathbf{X}\biggl)\\
-	&= P \cdot \partial_{x_j} \biggr(\frac{ \mathbf{X}\mathbf{H}^H\frac{1}{\sigma^2}\mathbf{H} \mathbf{X} }{\trace{\mathbf{X}^2}}\biggl)\\
-	&= P \cdot \Biggr(\frac{\partial_{x_j}\bigr(\mathbf{X}\mathbf{H}^H\frac{1}{\sigma^2}\mathbf{H}\mathbf{X}\bigl)}{\trace{\mathbf{X}^2}} - \frac{\mathbf{X}\mathbf{H}^H\frac{1}{\sigma^2}\mathbf{H}\mathbf{X} \cdot \partial_{x_j}\bigr(\trace{\mathbf{X}^2}\bigl)}{\bigr(\trace{\mathbf{X}^2}\bigl)^2}\Biggl)\\
+	\partial_{x_j}\bigr(\mathbf{\Phi}^{-1}\bigl) &= \partial_{x_j} \biggr(\frac{P_{tot}}{\trace{\mathbf{X}^2}} \mathbf{X}\mathbf{H}^H\frac{1}{\sigma^2}\mathbf{H} \mathbf{X} + \mathbf{I_M} \biggl)\\
+	&= \partial_{x_j} \biggr(\frac{P_{tot}}{\trace{\mathbf{X}^2}} \mathbf{X}\mathbf{H}^H\frac{1}{\sigma^2}\mathbf{H} \mathbf{X}\biggl)\\
+	&= P_{tot} \cdot \partial_{x_j} \biggr(\frac{ \mathbf{X}\mathbf{H}^H\frac{1}{\sigma^2}\mathbf{H} \mathbf{X} }{\trace{\mathbf{X}^2}}\biggl)\\
+	&= P_{tot} \cdot \Biggr(\frac{\partial_{x_j}\bigr(\mathbf{X}\mathbf{H}^H\frac{1}{\sigma^2}\mathbf{H}\mathbf{X}\bigl)}{\trace{\mathbf{X}^2}} - \frac{\mathbf{X}\mathbf{H}^H\frac{1}{\sigma^2}\mathbf{H}\mathbf{X} \cdot \partial_{x_j}\bigr(\trace{\mathbf{X}^2}\bigl)}{\bigr(\trace{\mathbf{X}^2}\bigl)^2}\Biggl)\\
 \end{align}
 and since
 \begin{align}
@@ -103,9 +126,24 @@ and since
 \end{align}
 it all combines together to
 \begin{equation}
-	\partial_{x_j}(R_k) = \frac{-1}{\log{2}}\frac{1}{\mathbf{\Phi}_{k,k}^{-1}} \cdot P \cdot \Biggr(\frac{\mathbf{E}_{j,j}\mathbf{H}^H\frac{1}{\sigma^2}\mathbf{HX} + \mathbf{XH}^H\frac{1}{\sigma^2}\mathbf{HE}_{j,j}}{\trace{\mathbf{X}^2}} - \frac{\mathbf{X}\mathbf{H}^H\frac{1}{\sigma^2}\mathbf{H}\mathbf{X} \cdot 2\mathbf{XE}_{j,j}}{\bigr(\trace{\mathbf{X}^2}\bigl)^2}\Biggl).
+	\partial_{x_j}(R_k(\mathbf{P}))) = \frac{P_{tot}}{\log{2}\cdot\mathbf{\Phi}_{k,k}^{-1}} \Biggr(\mathbf{\Phi}^{-1} \cdot \Biggr(\frac{\mathbf{E}_{j,j}\mathbf{H}^H\frac{1}{\sigma^2}\mathbf{HX} + \mathbf{XH}^H\frac{1}{\sigma^2}\mathbf{HE}_{j,j}}{\trace{\mathbf{X}^2}} - \frac{\mathbf{X}\mathbf{H}^H\frac{1}{\sigma^2}\mathbf{H}\mathbf{X} \cdot 2\mathbf{XE}_{j,j}}{\bigr(\trace{\mathbf{X}^2}\bigl)^2}\Biggl) \cdot \mathbf{\Phi}^{-1}\Biggl)_{k,k}
 \end{equation}
+% and finally for maximizing the sum Rate:
+% \begin{equation}
+% 	\nabla \bigr\Vert{(R(\mathbf{P}))\bigl\Vert}_1 =
+% 	\begin{bmatrix}
+% 		\sum_k{\Biggr[
+% 			\frac{-1}{\log{2}}\frac{1}{\mathbf{\Phi}_{k,k}^{-1}} \cdot P \cdot \Biggr(\frac{\mathbf{E}_{1,1}\mathbf{H}^H\frac{1}{\sigma^2}\mathbf{HX} + \mathbf{XH}^H\frac{1}{\sigma^2}\mathbf{HE}_{1,1}}{\trace{\mathbf{X}^2}} - \frac{\mathbf{X}\mathbf{H}^H\frac{1}{\sigma^2}\mathbf{H}\mathbf{X} \cdot 2\mathbf{XE}_{1,1}}{\bigr(\trace{\mathbf{X}^2}\bigl)^2}\Biggl)
+% 		\Biggl]}\\
+% 		\sum_k{\Biggr[
+% 			\frac{-1}{\log{2}}\frac{1}{\mathbf{\Phi}_{k,k}^{-1}} \cdot P \cdot \Biggr(\frac{\mathbf{E}_{2,2}\mathbf{H}^H\frac{1}{\sigma^2}\mathbf{HX} + \mathbf{XH}^H\frac{1}{\sigma^2}\mathbf{HE}_{2,2}}{\trace{\mathbf{X}^2}} - \frac{\mathbf{X}\mathbf{H}^H\frac{1}{\sigma^2}\mathbf{H}\mathbf{X} \cdot 2\mathbf{XE}_{2,2}}{\bigr(\trace{\mathbf{X}^2}\bigl)^2}\Biggl)
+% 		\Biggl]}\\
+% 		\vdots\\
+% 		\sum_k{\Biggr[
+% 			\frac{-1}{\log{2}}\frac{1}{\mathbf{\Phi}_{k,k}^{-1}} \cdot P \cdot \Biggr(\frac{\mathbf{E}_{m,m}\mathbf{H}^H\frac{1}{\sigma^2}\mathbf{HX} + \mathbf{XH}^H\frac{1}{\sigma^2}\mathbf{HE}_{m,m}}{\trace{\mathbf{X}^2}} - \frac{\mathbf{X}\mathbf{H}^H\frac{1}{\sigma^2}\mathbf{H}\mathbf{X} \cdot 2\mathbf{XE}_{m,m}}{\bigr(\trace{\mathbf{X}^2}\bigl)^2}\Biggl)
+% 		\Biggl]}
+% 	\end{bmatrix}
+% \end{equation}
 
-\subsection{max minRate}
-// calculations: formulas step by step\\
-Implementation with the norm and not just the sum allows us to use the same function in two different ways. Firstly with a //p value of 1, we just calculate the sum Rate for the throughput maximization or sum Rate maximization. Secondly we can set the //p value to something very small like -30 to create a max-min optimizer. The Optimum would be the //min norm but this is not feasible in the numerical domain and is prone to get stuck in local minimas, here -30 is a good approximation, we tested the algorithm with -100 and achieved results which were closer to the optimum that each channel gets the same Rate but that's not save to use.
+\subsection{Optimize for equal throughput for all users}
+As stated before implementation with the norm with a variable $p$ gives us the freedom to use the same code for other applications, as for example with the $\Vert\cdot\Vert_{min}$ we can maximize the minimum Rate, this gives us equal throughput for each user. But since the min-norm is non differentiable it is unusable for our gradient search algorithm. in search of a feasible solution we use the -30-norm, this gives us a good trade-of between stability and preciseness of the results. a $p$-Value of -100 could work to but the risk of getting non differentiable is too high.
