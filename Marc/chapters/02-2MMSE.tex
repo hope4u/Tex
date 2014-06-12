@@ -1,82 +1,59 @@
-\section{Optimizing for MMSE}
-\subsection{gradient Search}
+\section{Optimizing for MMSE with $K$ users}
+
+We have a channel with $K$ users which all have one single antenna and one receiver with $M$ antennas. Our system equation then is 
+\begin{equation}
+	\mathbf{y}^{(M\times 1)} = \mathbf{H}^{(M\times K)}\cdot \mathbf{x}^{(K\times 1)}.
+\end{equation}
+As discussed before the receive covariance matrix is 
+\begin{equation}
+	\mathbf{K}_e = \Biggr(\mathbf{\sqrt{P}H}^H\frac{1}{\sigma^2}\mathbf{H\sqrt{P}}+\mathbf{I}\Biggl)^{-1}
+\end{equation}
+with $\mathbf{P} = \diag{P_1,\dots,P_K}$ the power loading matrix where $P_k$ is the power of user $k$.\\
+We then calculate the signal to noise and interference ratio (SINR) and the rate $R$ of each user as
+\begin{align}
+	\text{SINR}_k = \frac{1}{(\mathvf{K}_e)_{k,k}}\\
+	R_k = \log_2{1+\text{SINR}_k}.
+\end{align}
+We further define a fixed power constraint $P_{tot}$ so that $ \sum_k{P_k} \leq P_{tgt}$ and $P_k\leq 0\,,\forall k$. 
+
+\subsection{Gradient search}
 
 The idea of the steepest descent algorithm is to find the global maximum or minimum of a function by searching along the gradient of the function.
-\begin{algorithmic}
-	\STATE initialize $x^{(0)}$
-	\REPEAT
-	\STATE calculate $x^{(n+1)}=x^{(n)}-\mu\nabla f(x^{(n)})$ with $\mu$ an arbitrary step size.
-	\UNTIL{$\nabla f(x^{(n)} = 0$}
-\end{algorithmic}
-We used two ways to calculate the gradient at a certain point, numerical and analytical:
-
-\subsubsection{Numerical Gradient}
-The numerical Algorithm calculates the Gradient with numerical means. Which means to increase the input in each dimension one after another by a very small amount and recalculate output. With both results, the original one and the new ones, we can approximate the local gradient very precisely.
-\begin{algorithmic}
-	\STATE initialize $\mathbf{X}^{(0)}$
-	\REPEAT
-		\FOR{$k=1$ to $M$}
-		\STATE $\mathbf{X}_e = \mathbf{X} + \eta\mathbf{E}_{k,k}$
-		\STATE $\partial_{X_k}(f(\mathbf{X}^{(n)}) = \frac{f(\mathbf{X}^{(n)}-f(\mathbf{X}_e)}{\eta}$
-		\ENDFOR
-		\STATE 
-		\begin{flalign*}
-			\mathbf{X}^{(n+1)}=\mathbf{X}^{(n)}-\mu
-			\begin{bmatrix}
-				\partial_{X_1}(f(\mathbf{X}^{(n)}))\\
-				\partial_{X_2}(f(\mathbf{X}^{(n)})) \\
-				\vdots\\
-				\partial_{X_M}(f(\mathbf{X}^{(n)}))
-			\end{bmatrix}
-		\end{flalign*}
-	\UNTIL{$\nabla f(\mathbf{X}^{(n)} = 0$}
-1.	Calculate Starting Point
-2.	1:K 
-a.	Increase input K
-b.	Calculate Point
-3.	Calculate Gradient
-4.	Step to next point
-5.	Iterate
-\end{algorithmic}
-\subsubsection{Analytical Gradient}
-The analytical Algorithm on the other hand uses analytical tools to calculate the gradient form the known function in advance. It uses the gradient function to calculate the exact gradient at each point.
 \begin{algorithm}
-	Pre: calculate analytical Gradient by hand
-	1.	Calculate gradient at input Point with the precalculated gradient function
-	2.	Step to the next point
-	3.	Iterate
-\end{algorithm}
-
-\subsubsection{optimizing the algorithm}
-One Problem that occurred during the simulations was that at some point the gradient search got unstable, in our case it started to fluctuate and stopped moving towards the optimum. The reason of this bad and unwanted behavior lies in the step size of the function, and so there are two ways to fix it. The first and easy way is just to reduce the step size and increase the number of iterations accordingly, this way the problem occurs later and weaker and has less impact on the end result. The second much more complicated solution is to introduce adaptive step size.\\
-Adaptive Step size means, that for each iteration we search the optimal step size which allows us to take the biggest step towards our goal. So it should not be possible to choose a step size which gives us a worse result than we had on the iteration before.
-\begin{algorithm}
-	Start at an arbitrary step size, calculate the next point
-	If next Point is better than last, increase step size
-	If next Point is worse than last, decrease step size
-	Stop if increasing or decreasing does not improve the result anymore
-\end{algorithm}
-With this Algorithm we can prevent any fluctuation in the gradient and force it to go the fastest possible way. We do not have to calculate the gradient as often and can thus reduce the needed calculation time. Another nice side effect is, that we implicitly know that we reached the maximum or minimum when the step size is decreased to zero without finding any better points than the previous one.
-
-\subsection{Optimize for maximum throughput}
-To find the maximal possible and feasible throughput with a given channel matrix $\mathbf{H}$ we can optimize the sumrate $\sum_k{R_k(\mathbf{P})}$ with a gradient search algorithm.\\
-We Optimize
+	\KwIn{$\mathbf{X^{(0)}}$, $f(\mathbf{X})$, $\nabla f(\mathbf{X})$, $\mu$(step size)}
+	\KwOut{$\mathbf{X}^{(\text{end})}$}
+	\Repeat{$\nabla f(\mathbf{X}^{(n)}) = 0$}{
+		$
+			\mathbf{X}^{(n+1)}=\mathbf{X}^{(n)}-\mu\nabla f(\mathbf{X}^{(n)})
+		$\;
+	}		
+\end{algorithm}\\
+To optimize for the rates of a given channel $\mathbf{H}$ we define
 \begin{equation}
-	\begin{aligned}
-		& \underset{\mathbf{P}}{\text{maximize}}
-		& & \sum_k{R_k(\mathbf{P})} \\
-		& \text{subject to}
-		& & P_k\geq 0,\,\forall P_k\in \diag{\mathbf{P}}, \\
-		&&& \trace{\mathbf{P}}\leq P.
-	\end{aligned}
+	f_p(\mathbf{P})=\bigr\Vert{(R(\mathbf{P}))\bigl\Vert}_p = \Biggr(\sum_k{(R_k(\mathbf{P}))^p}\Biggl)^{1/p}.
 \end{equation}
-for a given total power $P_{tot}$ so that the diagonal power allocation matrix $\mathbf{P}$ is positive-semidefinite e.g. has no negative entries.\\
+as the $p$-norm of the user rates. and calculate its gradient $\nabla f_p(\mathvf{P})$ as
+\begin{equation}
+	\nabla f_p(\mathbf{P}) =
+	\begin{bmatrix}
+		\frac{\partial f_p(\mathbf{P})}{\partial P_1}\\
+		\frac{\partial f_p(\mathbf{P})}{\partial P_2}\\
+		\vdots\\
+		\frac{\partial f_p(\mathbf{P})}{\partial P_K}.
+	\end{bmatrix}
+\end{equation}
+This gives us an iterative search algorithm
+\begin{equation}
+	\mathbf{P}^{n+1} = \mathbf{P}^n + \mu \nabla \bigr\Vert{(R(\mathbf{P}))\bigl\Vert}_p
+\end{equation}
+where $(\cdot)^n$ denotes the $n$-th iteration of the search algorithm and $\mu$ an arbitrary step size.
+In the following we use $\partial_{X_j}(f_p) = \frac{\partial f_p(\mathbf{X})}{\partial X_j}$ and $R = R(\mathbf{X})$.
+
 We now calculate the gradient of
 \begin{equation}
-	\bigr\Vert{(R(\mathbf{P}))\bigl\Vert}_p = \Biggr(\sum_k{(R_k(\mathbf{P}))^p}\Biggl)^{1/p}.
+	\bigr\Vert{(R)\bigl\Vert}_p = \Biggr(\sum_k{(R_k)^p}\Biggl)^{1/p}.
 \end{equation}
-Using the norm gives us the possibility to reuse the same calculation later for the throughput equalization (max minRate).
-We know that the gradient is calculated as 
+as follows
 \begin{align}
 	\nabla \bigr\Vert{(R(\mathbf{P}))\bigl\Vert}_p &= \nabla \Biggr[ \Biggr(\sum_k{(R_k(\mathbf{P}))^p}\Biggl)^{1/p} \Biggl]\\
 	&= \begin{bmatrix}
@@ -84,50 +61,53 @@ We know that the gradient is calculated as
 	\end{bmatrix}
 	\cdot \Biggr(\sum_k{(R_k(\mathbf{P}))^p}\Biggl)^{1/p}.
 \end{align}
-This gives us an iterative search algorithm
-\begin{equation}
-	\mathbf{P}^{n+1} = \mathbf{P}^n + \mu \nabla \bigr\Vert{(R(\mathbf{P}))\bigl\Vert}_p
-\end{equation}
-where $(\cdot)^n$ denotes the $n$-th iteration of the search algorithm and $\mu$ an arbitrary step size we set $p = 1$ for $\bigr\Vert{(R(\mathbf{P}))\bigl\Vert}_1 = \sum_k{R}$. 
-But first we need to convert our bounded optimization problem into an unbounded one. First to guarantee $P_k \geq 0 \, \forall k\in\diag{\mathbf{P}}$ we can introduce a diagonal matrix $\mathbf{X}$ as $X_k^2 = P_k$ with $X_k$ is the $k$-th diagonal element of $\mathbf{X}$. Secondly we need to guarantee $\trace{\mathbf{P}}\leq P_{tot}$ to achieve this we tighten the condition to $\trace{\mathbf{P}}= P_{tot}$.
-\begin{align}
+
+Due to the total power constraint $P_{tot}$ and that no user can send with negative power we have a bounded optimization problem. So we need to convert it into an unbounded one:
+\begin{enumerate}
+ 	\item to guarantee $P_k \geq 0 \, \forall k\in\diag{\mathbf{P}}$ we can introduce a diagonal matrix $\mathbf{X}$ as $X_k^2 = P_k$ with $X_k$ is the $k$-th diagonal element of $\mathbf{X}$.
+ 	\item to guarantee $\trace{\mathbf{P}}\leq P_{tot}$ we tighten the condition to $\trace{\mathbf{P}}= P_{tot}$ and calculate the rate with:
+ 	\begin{align}
 	R_k &= -\log_2\Biggr(\mathbf{\Phi}_{k,k}^{-1}\Biggl)\\
 	&= -\log_2\Biggr(\biggr[ \sqrt{\mathbf{P}}\mathbf{H}^H\frac{1}{\sigma^2}\mathbf{H}\sqrt{\mathbf{P}} + \mathbf{I_M} \biggl]_{k,k}^{-1}\Biggl)\\
 	&= -\log_2\Biggr(\biggr[ \sqrt{\mathbf{P} \frac{P_{tot}}{\trace{\mathbf{P}}}}\mathbf{H}^H\frac{1}{\sigma^2}\mathbf{H} \sqrt{\mathbf{P} \frac{P_{tot}}{\trace{\mathbf{P}}}} + \mathbf{I_M} \biggl]_{k,k}^{-1}\Biggl)\\
 	&= -\log_2\Biggr(\biggr[ \mathbf{X} \sqrt{\frac{P_{tot}}{\trace{\mathbf{X}^2}}} \mathbf{H}^H\frac{1}{\sigma^2}\mathbf{H} \mathbf{X} \sqrt{\frac{P_{tot}}{\trace{\mathbf{X}^2}}} + \mathbf{I_M} \biggl]_{k,k}^{-1}\Biggl)\\
 	&= -\log_2\Biggr(\biggr[\frac{P_{tot}}{\trace{\mathbf{X}^2}} \mathbf{X}\mathbf{H}^H\frac{1}{\sigma^2}\mathbf{H} \mathbf{X} + \mathbf{I_M} \biggl]_{k,k}^{-1}\Biggl)
 \end{align}
-We can calculate the partial derivatives of the Rates as follows:
+\end{enumerate}
+
+We now can calculate the partial derivatives of the Rates:
 \begin{align}
 	\partial_{x_j} \bigr\Vert{(R(\mathbf{P}))\bigl\Vert}_p
 	&=\partial_{x_j}\Biggr[\Biggr(\sum_k{(R_k(\mathbf{P}))^p}\Biggl)^{1/p}\Biggl]\\
-	&=\frac{1}{p}\Biggr(\sum_k{(R_k(\mathbf{P}))^p}\Biggl)^{1/p-1} \cdot \sum_k{\Biggr[p(R_k(\mathbf{P}))^{p-1} \cdot \partial_{x_j}(R_k(\mathbf{P}))\Biggl]}.
+	&=\frac{1}{p}\Biggr(\sum_k{(R_k(\mathbf{P}))^p}\Biggl)^{1/p-1} \cdot \sum_k{\Biggr[p\cdot(R_k(\mathbf{P}))^{p-1} \cdot \partial_{x_j}(R_k(\mathbf{P}))\Biggl]}.
 \end{align}
-The partial derivative of the $k$-th users Rate $R_k$ is calculated as
+with the partial derivative of the $k$-th users rate
 \begin{align}
 	\partial_{x_j}(R_k) &= \partial_{x_j}\bigr(-\log_2{\mathbf{\Phi}_{k.k}^{-1}}\bigl)\\
-	&=\frac{-1}{\log{2}}\frac{1}{\mathbf{\Phi}_{k,k}^{-1}} \cdot \partial_{x_j}\bigr(\mathbf{\Phi}_{k,k}^{-1}\bigl)
+	&=\frac{-1}{\log{2}}\frac{1}{\mathbf{\Phi}_{k,k}^{-1}} \cdot \partial_{x_j}\bigr(\mathbf{\Phi}_{k,k}^{-1}\bigl).
 \end{align}
-and the derivative of the of the inverse matrix $\mathbf{\Phi}$
+We use
 \begin{equation}
 	\partial_{x_j}\bigr(\mathbf{\Phi}_{k,k}^{-1}\bigl) = \Biggr(-\mathbf{\Phi}^{-1} \cdot \partial_{x_j}\bigr(\mathbf{\Phi}^{-1}\bigl) \cdot \mathbf{\Phi}^{-1}\Biggl)_{k,k}.
-\end{equation}
-With
+\end{equation} to calculate the partial derivative of an inverse matrix, such that the derivative of the of the inverse matrix $\mathbf{\Phi}$ becomes
 \begin{align}
 	\partial_{x_j}\bigr(\mathbf{\Phi}^{-1}\bigl) &= \partial_{x_j} \biggr(\frac{P_{tot}}{\trace{\mathbf{X}^2}} \mathbf{X}\mathbf{H}^H\frac{1}{\sigma^2}\mathbf{H} \mathbf{X} + \mathbf{I_M} \biggl)\\
 	&= \partial_{x_j} \biggr(\frac{P_{tot}}{\trace{\mathbf{X}^2}} \mathbf{X}\mathbf{H}^H\frac{1}{\sigma^2}\mathbf{H} \mathbf{X}\biggl)\\
 	&= P_{tot} \cdot \partial_{x_j} \biggr(\frac{ \mathbf{X}\mathbf{H}^H\frac{1}{\sigma^2}\mathbf{H} \mathbf{X} }{\trace{\mathbf{X}^2}}\biggl)\\
-	&= P_{tot} \cdot \Biggr(\frac{\partial_{x_j}\bigr(\mathbf{X}\mathbf{H}^H\frac{1}{\sigma^2}\mathbf{H}\mathbf{X}\bigl)}{\trace{\mathbf{X}^2}} - \frac{\mathbf{X}\mathbf{H}^H\frac{1}{\sigma^2}\mathbf{H}\mathbf{X} \cdot \partial_{x_j}\bigr(\trace{\mathbf{X}^2}\bigl)}{\bigr(\trace{\mathbf{X}^2}\bigl)^2}\Biggl)\\
+	&= P_{tot} \cdot \Biggr(\frac{\partial_{x_j}\bigr(\mathbf{X}\mathbf{H}^H\frac{1}{\sigma^2}\mathbf{H}\mathbf{X}\bigl)}{\trace{\mathbf{X}^2}} - \frac{\mathbf{X}\mathbf{H}^H\frac{1}{\sigma^2}\mathbf{H}\mathbf{X} \cdot \partial_{x_j}\bigr(\trace{\mathbf{X}^2}\bigl)}{\bigr(\trace{\mathbf{X}^2}\bigl)^2}\Biggl).
 \end{align}
-and since
+The partial derivative of a matrix $\frac{\partial(\mathbf{X})}{\partial X_{i,j}} = E_{i,j}$ with $E_{i,j}$ the single entry matrix, 1 at $(i,j)$ and zero elsewhere. Ant thus
 \begin{align}
 	\partial_{x_j}\bigr(\mathbf{X}\mathbf{H}^H\frac{1}{\sigma^2}\mathbf{H}\mathbf{X}\bigl) &= \mathbf{E}_{j,j}\mathbf{H}^H\frac{1}{\sigma^2}\mathbf{HX} + \mathbf{XH}^H\frac{1}{\sigma^2}\mathbf{HE}_{j,j}\\
-	\partial_{x_j}\bigr(\trace{\mathbf{X}^2}\bigl) &= 2\mathbf{XE}_{j,j}
+	\partial_{x_j}\bigr(\trace{\mathbf{X}^2}\bigl) &= 2\mathbf{XE}_{j,j}.
 \end{align}
-it all combines together to
-\begin{equation}
-	\partial_{x_j}(R_k(\mathbf{P}))) = \frac{P_{tot}}{\log{2}\cdot\mathbf{\Phi}_{k,k}^{-1}} \Biggr(\mathbf{\Phi}^{-1} \cdot \Biggr(\frac{\mathbf{E}_{j,j}\mathbf{H}^H\frac{1}{\sigma^2}\mathbf{HX} + \mathbf{XH}^H\frac{1}{\sigma^2}\mathbf{HE}_{j,j}}{\trace{\mathbf{X}^2}} - \frac{\mathbf{X}\mathbf{H}^H\frac{1}{\sigma^2}\mathbf{H}\mathbf{X} \cdot 2\mathbf{XE}_{j,j}}{\bigr(\trace{\mathbf{X}^2}\bigl)^2}\Biggl) \cdot \mathbf{\Phi}^{-1}\Biggl)_{k,k}
-\end{equation}
+Finally we combine it all together for the $j$-th partial derivative of the $p$-norm of the user rates:
+\begin{multline}
+	\partial_{x_j} \bigr\Vert{(R)\bigl\Vert}_p =\\
+	\Biggr(\sum_k{(R_k)^p}\Biggl)^{1/p-1} \cdot \sum_k{\Biggr[\frac{1}{\log{2}}\frac{(R_k)^{p-1}}{\mathbf{\Phi}_{k,k}^{-1}} \cdot \Biggr(\mathbf{\Phi}^{-1} \cdot \\ P_{tot} \cdot \Biggr(\frac{\mathbf{E}_{j,j}\mathbf{H}^H\frac{1}{\sigma^2}\mathbf{HX} + \mathbf{XH}^H\frac{1}{\sigma^2}\mathbf{HE}_{j,j}}{\trace{\mathbf{X}^2}} -\\ \frac{\mathbf{X}\mathbf{H}^H\frac{1}{\sigma^2}\mathbf{H}\mathbf{X} \cdot 2\mathbf{XE}_{j,j}}{\bigr(\trace{\mathbf{X}^2}\bigl)^2}\Biggl)
+	\cdot \mathbf{\Phi}^{-1}\Biggl)_{k,k}\Biggl]}
+	%\partial_{x_j}(R_k)) = \frac{P_{tot}}{\log{2}\cdot\mathbf{\Phi}_{k,k}^{-1}} \Biggr(\mathbf{\Phi}^{-1} \cdot \Biggr(\frac{\mathbf{E}_{j,j}\mathbf{H}^H\frac{1}{\sigma^2}\mathbf{HX} + \mathbf{XH}^H\frac{1}{\sigma^2}\mathbf{HE}_{j,j}}{\trace{\mathbf{X}^2}} - \frac{\mathbf{X}\mathbf{H}^H\frac{1}{\sigma^2}\mathbf{H}\mathbf{X} \cdot 2\mathbf{XE}_{j,j}}{\bigr(\trace{\mathbf{X}^2}\bigl)^2}\Biggl) \cdot \mathbf{\Phi}^{-1}\Biggl)_{k,k}
+\end{multline}
 % and finally for maximizing the sum Rate:
 % \begin{equation}
 % 	\nabla \bigr\Vert{(R(\mathbf{P}))\bigl\Vert}_1 =
@@ -145,5 +125,61 @@ it all combines together to
 % 	\end{bmatrix}
 % \end{equation}
 
-\subsection{Optimize for equal throughput for all users}
-As stated before implementation with the norm with a variable $p$ gives us the freedom to use the same code for other applications, as for example with the $\Vert\cdot\Vert_{min}$ we can maximize the minimum Rate, this gives us equal throughput for each user. But since the min-norm is non differentiable it is unusable for our gradient search algorithm. in search of a feasible solution we use the -30-norm, this gives us a good trade-of between stability and preciseness of the results. a $p$-Value of -100 could work to but the risk of getting non differentiable is too high.
+\subsection{maximum throughput}
+We want to maximize the sum-rate for a given channel $\mathbf{H}$ and a fixed power constraint $P_{tot}$:
+\begin{equation}
+	\begin{aligned}
+		& \underset{\mathbf{P}}{\text{maximize}}
+		& & \sum_k{R_k(\mathbf{P})} \\
+		& \text{subject to}
+		& & P_k\geq 0,\,\forall P_k\in \diag{\mathbf{P}}, \\
+		&&& \trace{\mathbf{P}}\leq P.
+	\end{aligned}
+\end{equation}
+this optimizes the diagonal precoding matrix $\mathbf{P}$ with $\mathbf{P} = \diag{P_1,\dots,P_K},\,\forall P_k \geq 0$. Using the previously calculated gradient of $\bigr\Vert{(R(\mathbf{P}))\bigl\Vert}_p$ with $p = 1$ for $\bigr\Vert{(R(\mathbf{P}))\bigl\Vert}_1 = $
+
+As sated before the $p$-norm gives us the possibility to use the same gradient for different applications; setting $p=1$ gives us $\bigr\Vert{(R(\mathbf{P}))\bigl\Vert}_1 = \sum_k{R_k}$ to optimize for the sum-rate:
+\begin{multline}
+	\partial_{x_j} \Bigr(\sum_k{R_k}\Bigl) =
+	\sum_k{\Biggr[\frac{1}{\log{2}}\frac{1}{\mathbf{\Phi}_{k,k}^{-1}} \cdot \Biggr(\mathbf{\Phi}^{-1} \cdot P_{tot} \\\cdot \Biggr(\frac{\mathbf{E}_{j,j}\mathbf{H}^H\frac{1}{\sigma^2}\mathbf{HX} + \mathbf{XH}^H\frac{1}{\sigma^2}\mathbf{HE}_{j,j}}{\trace{\mathbf{X}^2}} - \frac{\mathbf{X}\mathbf{H}^H\frac{1}{\sigma^2}\mathbf{H}\mathbf{X} \cdot 2\mathbf{XE}_{j,j}}{\bigr(\trace{\mathbf{X}^2}\bigl)^2}\Biggl)
+	\cdot \mathbf{\Phi}^{-1}\Biggl)_{k,k}\Biggl]}
+\end{multline}
+
+\subsection{maximum min-rate}
+To maximize the min-rate we would use $p=-\infty$ for the$\Vert\cdot\Vert_{min}$ if there is no per user power constraint this gives us equal throughput for each user. But the min-norm is non differentiable and thus unusable for our gradient search algorithm. In search of a feasible solution we use the $-30$-norm, this gives us a good trade-of between stability and preciseness of the results. a $p$-Value of $-100$ could work to but the risk of getting non differentiable is too high.
+We thus optimize
+\begin{equation}
+	\begin{aligned}
+		& \underset{\mathbf{P}}{\text{maximize}}
+		& & \Bigr\Vert{R(\mathbf{P})}\Bigl\Vert_{-30} \\
+		& \text{subject to}
+		& & P_k\geq 0,\,\forall P_k\in \diag{\mathbf{P}}, \\
+		&&& \trace{\mathbf{P}}\leq P.
+	\end{aligned}
+\end{equation}
+which is the maxmin algorithm.
+
+\subsection{optimizing the gradient algorithm}
+One problem that occurred during the simulations was that at some point the gradient search got unstable, in our case it started to fluctuate and stopped moving towards the optimum. The reason of this bad and unwanted behavior lies in the step size of the function, and so there are two ways to fix it. The first and easy way is just to reduce the step size and increase the number of iterations accordingly, this way the problem occurs later and weaker and has less impact on the end result. The second much more complicated solution is to introduce adaptive step size.
+
+Adaptive step size means, that for each iteration we search the optimal step size which allows us to take the biggest step towards our goal. So it should not be possible to choose a step size which gives us a worse result than we had on the iteration before.
+\begin{algorithm}
+	\KwIn{$\mathbf{X}^{(0)}$, $f(\mathbf{X}^{(0)})$, $\nabla f(\mathbf{X}^{(0)})$, $\mu^{(0)}$, $\tau$ (step size multiplicator)}
+	\eIf{$f(\mathbf{X}^{(n)}) \leq f(\mathbf{X}^{(n+1)})$}{
+		\Repeat{$f(\mathbf{X}^{(n)}) \leq f(\mathbf{X}^{(n-1)})$}{
+			$\mu^{(n)} = \mu^{(n-1)} \cdot \tau$\;
+			$\mathbf{X}^{(n)}=\mathbf{X}^{(0)}-\mu^{(n)}\nabla f(\mathbf{X}^{(0)})$\;
+			calculate: $f(\mathbf{X}^{(n)})$\;
+		}
+		\Return{$\mathbf{X}^{(n-1)}$}
+	}
+	{
+		\Repeat{$f(\mathbf{X}^{(n)}) > f(\mathbf{X}^{(n-1)})$}{
+		$\mu^{(n)} = \mu^{(n-1)} \cdot 1/\tau$\;
+		$\mathbf{X}^{(n)}=\mathbf{X}^{(0)}-\mu^{(n)}\nabla f(\mathbf{X}^{(0)})$\;
+		calculate: $f(\mathbf{X}^{(n)})$\;
+		}
+		\Return{$\mathbf{X}^{(n)}$}
+	}
+\end{algorithm}
+With this Algorithm we can prevent any fluctuation in the gradient and force it to go the fastest possible way. We do not have to calculate the gradient as often and can thus reduce the needed calculation time. Another nice side effect is, that we implicitly know that we reached the maximum or minimum when the step size is decreased to zero without finding any better points than the previous one.

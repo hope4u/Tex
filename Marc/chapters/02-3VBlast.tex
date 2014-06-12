@@ -1,6 +1,32 @@
 \section{optimizing VBlast}
 
 \subsection{numeric Gradient}
+
+\subsubsection{Numerical Gradient}
+The numerical Algorithm calculates the Gradient with numerical means. Which means to increase the input in each dimension one after another by a very small amount and recalculate output. With both results, the original one and the new ones, we can approximate the local gradient very precisely.
+\begin{algorithm}
+	\KwIn{$\mathbf{X^{(0)}}$, $f(\mathbf{X})$, $\eta$ (interval), $\mu$ (step size)}
+	\KwOut{$\mathbf{X}^{(\text{end})}$}
+	\Repeat{$\nabla f(\mathbf{X}^{(n)}) = 0$}{
+		\For{$k=1$ to $M$}{
+			$
+				\mathbf{X}_e = \mathbf{X} + \eta\mathbf{E}_{k,k}
+			$\;
+			$
+				\partial_{X_k}(f(\mathbf{X}^{(n)}) = \frac{f(\mathbf{X}^{(n)}-f(\mathbf{X}_e)}{\eta}
+			$\;
+		}
+		$
+			\mathbf{X}^{(n+1)}=\mathbf{X}^{(n)}-\mu
+			\begin{bmatrix}
+				\partial_{X_1}(f(\mathbf{X}^{(n)}))\\
+				\partial_{X_2}(f(\mathbf{X}^{(n)}))\\
+				\vdots\\
+				\partial_{X_M}(f(\mathbf{X}^{(n)}))
+			\end{bmatrix}
+		$\;
+	}		
+\end{algorithm}
 \subsubsection{max sumRate}
 \subsubsection{max minRate}
 

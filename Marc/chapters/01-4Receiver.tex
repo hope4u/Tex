@@ -12,9 +12,9 @@ In this section we will use two different receiver structures:
 The goal of the MMSE equalizer is to minimize the mean error at the filter output. We use $\mathbf{K}_y = \mathbf{HK}_x\mathbf{H}^H + \mathbf{K}_n$ and equal power allocation at the transmitter $\mathbf{K}_x = (P/M)\mathbf{I}_N$. Then we can write the error covariance matrix as
 \begin{align}
 	\mathbf{K}_e &= \mathbf{GK}_y\mathbf{G}^H - \mathbf{GH} - \mathbf{H}^H\mathbf{G}^H + \mathbf{I}_N\\
-	&=\Biggr(\mathbf{GK}_y - \mathbf{H}^H\Biggl) \mathbf{K}_y^{-1} \Biggr(\mathbf{GK}_y - \mathbf{H}^H\Biggl)^H - \mathbf{H}^H\mathbf{K}_y^{-1}\mathbf{H}+\mathbf{I}_N.
+	&=\Biggr(\mathbf{GK}_y - \mathbf{H}^H\Biggl) \mathbf{K}_y^{-1} \Biggr(\mathbf{GK}_y - \mathbf{H}^H\Biggl)^H - \mathbf{H}^H\mathbf{K}_y^{-1}\mathbf{H}+\mathbf{I}_N
 \end{align}
-and since $\mathbf{K}_y$ is a non-negative definite matrix we need to minimize $\mathbf{GK}_y-\mathbf{H}^H\bigl=\mathbf{0}$ with $\mathbf{K}_n = \sigma_n^2\mathbf{I}_N$. This leads us to the filter matrix $\mathbf{G}$ as
+and since $\mathbf{K}_y$ is a non-negative definite matrix we need to minimize $\mathbf{GK}_y-\mathbf{H}^H=\mathbf{0}$ with $\mathbf{K}_n = \sigma_n^2\mathbf{I}_N$. This leads us to the filter matrix $\mathbf{G}$ as
 \begin{align}
 	\mathbf{G} &= \mathbf{H}^H\mathbf{K}_y^{-1}\\
 	&= \mathbf{H}^H\Biggr(\mathbf{HH}^H + \sigma_n^2\mathbf{I}_N\Biggl)^{-1}\\

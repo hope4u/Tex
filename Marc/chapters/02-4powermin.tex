@@ -4,10 +4,12 @@
 \subsection{The Algorithm}
 \begin{enumerate}
 	\item calculate the effective interference for MMSE processing:
-		\begin{multline}
-			\zeta_{k,s} = \biggl\{\biggl(d^{-\roh}_{k,k}\chi_{k,k}H^H_{k,k}\biggl(\sum_{j\neqk}{P_jd^{-\roh}_{k,j}\chi_{k,j}H_{k,j}T_jT_j^HH^H_{k,j}}\\
-			+N_t\sigma^2_nI\biggr)^{-1}H_{k,k}+\frac{1}{P_k}I\biggr)^{-1}\biggr\}^{(s,s)}
-		\end{multline}
+		\begin{equation}
+			\begin{aligned}
+				\zeta_{k,s} = \Biggl\{\Biggl(d^{-\rho}_{k,k}\chi_{k,k}H^H_{k,k}\biggl(\sum_{j\neq k}{P_jd^{-\rho}_{k,j}\chi_{k,j}H_{k,j}T_jT_j^HH^H_{k,j}}\\
+				+N_t\sigma^2_nI\biggr)^{-1}H_{k,k}+\frac{1}{P_k}I\Biggr)^{-1}\Biggr\}^{(s,s)}
+			\end{aligned}	
+		\end{equation}
 
 	\item calculate the optimal loading matrix
 		\begin{equation}
@@ -70,8 +72,7 @@ and the derivative of $\mathbf{\Phi}$ as
 \end{align}
 and finally
 \begin{equation}
-	\begin{split}
-		\partial_{X_j}(R_k) = \frac{1}{2}\Biggr(\sum_k{(R_k-R_{tgt})^2}\Biggl)^{-1/2}\cdot\sum_k{\Biggr[2(R_k-R_{tgt})\cdot\frac{1}{\log{2}\cdot\mathbf{\Phi}_{k,k}^{-1}}\cdot\\
-		\cdot\Biggr(-\mathbf{\Phi}^{-1} \cdot \mathbf{E}_{j,j}\mathbf{H}^H\frac{1}{\sigma^2}\mathbf{HX} + \mathbf{XH}^H\frac{1}{\sigma^2}\mathbf{HE}_{j,j}\Biggl) \cdot \mathbf{\Phi}^{-1}\Biggl)_{k,k}\Biggl]}.
-	\end{split}
+	\begin{aligned}
+		\partial_{X_j}(R_k) = \frac{1}{2}\Biggr(\sum_k{(R_k-R_{tgt})^2}\Biggl)^{-1/2}\cdot\sum_k{\Biggr[2(R_k-R_{tgt})\cdot\frac{1}{\log{2}\cdot\mathbf{\Phi}_{k,k}^{-1}}\cdot\\\cdot\Biggr(-\mathbf{\Phi}^{-1} \cdot\Biggr( \mathbf{E}_{j,j}\mathbf{H}^H\frac{1}{\sigma^2}\mathbf{HX} + \mathbf{XH}^H\frac{1}{\sigma^2}\mathbf{HE}_{j,j}\Biggl) \cdot \mathbf{\Phi}^{-1}\Biggl)_{k,k}\Biggl]}.
+	\end{aligned}
 \end{equation}

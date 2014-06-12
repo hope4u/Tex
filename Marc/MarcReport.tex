@@ -7,8 +7,9 @@
 \usepackage{xspace}     % for explicit spaces in abbreviations (\xspace)
 \usepackage{moreverb}   % more verbatim: \begin{boxedverbatim} for source code
 \usepackage{verbatim}   % for plain text
-\usepackage{algorithm}  % for algorithms
-\usepackage{algorithmic}% for algorithms
+% \usepackage{algorithm}  % for algorithms
+% \usepackage{algorithmic}% for algorithms
+\usepackage[lined,boxed,linesnumbered]{algorithm2e} %algorithms 
 \usepackage{multirow}   % for multi-rows in tables
 \usepackage{cite}       % will become: [2], [5]--[7]  (using cite.sty)
 \usepackage{float}
@@ -67,10 +68,10 @@
 \newtheorem{lemma}{Lemma}[chapter]
 
 %== for algorithms ============================================
-\floatstyle{ruled}
-\newfloat{algorithm}{tb}{loa}  % loa: auxiliary file for list of algorithms
-\floatname{algorithm}{Algorithm}
-\newcommand{\theHalgorithm}{\arabic{algorithm}}
+% \floatstyle{ruled}
+% \newfloat{algorithm}{tb}{loa}  % loa: auxiliary file for list of algorithms
+% \floatname{algorithm}{Algorithm}
+% \newcommand{\theHalgorithm}{\arabic{algorithm}}
 
 %=== Index ====================================================
 %\usepackage{makeidx} 
