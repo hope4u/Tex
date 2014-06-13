@@ -1,45 +1,59 @@
-\section{optimizing for SINR target}
-\subsection{fodor}
+\section{minimize the total power for per user SINR targets}
+The idea is to fix SINR targets for each user $\text{SINR}_{tgt_k}$ and then find the minimum required sum power $P_{tot} = \sum_k{P_k}$ to reach these targets. We no longer care about an upper bound for $P_{tot}$ and as always will not introduce a per user power constraint.
+\begin{equation}
+	\begin{aligned}
+		& \underset{\mathbf{P}}{\text{minimize}}
+		& & \sum_k{P_k} \\
+		& \text{subject to}
+		& & \text{SINR}_k = \text{SINR}_{tgt_k},\,\forall k\in K, \\
+		&&& P_k\geq 0,\,\forall P_k\in \diag{\mathbf{P}}.
+	\end{aligned}
+\end{equation}
+The channel will again be
+\begin{equation}
+	\mathbf{y}^{(M\times 1)} = \mathbf{H}^{(M\times K)}\cdot \mathbf{x}^{(K\times 1)}.
+\end{equation}
+and we will only use the LMMSE receiver.
 
-\subsection{The Algorithm}
-\begin{enumerate}
-	\item calculate the effective interference for MMSE processing:
-		\begin{equation}
+\subsection{Fodor}
+Fodor extends the work of //paper which offer a closed form solution for the above optimization problem but only works for feasible SINR targets. He proposes following algorithm:
+\begin{algorithm}
+	\KwIn{$t=0$, $\epsilon^{(0)}=1$, SINR targets $\mathbf{\Gamma} = \diag{\gamma_k^{tgt}}$ and transmission powers $\mathbf{P}^{(0)}$}
+	\Repeat{$\mathbf{P}^{(n)}=\mathbf{P}^{(n-1)}$}{
+		calculate the effective interference for MMSE processing:
+		\begin{algomathdisplay}
 			\begin{aligned}
-				\zeta_{k,s} = \Biggl\{\Biggl(d^{-\rho}_{k,k}\chi_{k,k}H^H_{k,k}\biggl(\sum_{j\neq k}{P_jd^{-\rho}_{k,j}\chi_{k,j}H_{k,j}T_jT_j^HH^H_{k,j}}\\
-				+N_t\sigma^2_nI\biggr)^{-1}H_{k,k}+\frac{1}{P_k}I\Biggr)^{-1}\Biggr\}^{(s,s)}
+				\zeta_{k,s} = \Biggl\{\Biggl(d^{-\rho}_{k,k}\chi_{k,k}\mathbf{H}^H_{k,k}&\biggl(\sum_{j\neq k}{P_jd^{-\rho}_{k,j}\chi_{k,j}\mathbf{H}_{k,j}\mathbf{T}_j\mathbf{T}_j^H\mathbf{H}^H_{k,j}}\\
+				&+N\sigma^2_n\mathbf{I}\biggr)^{-1}\mathbf{H}_{k,k}+\frac{1}{P_k}\mathbf{I}\Biggr)^{-1}\Biggr\}^{(s,s)}
 			\end{aligned}	
-		\end{equation}
-
-	\item calculate the optimal loading matrix
-		\begin{equation}
-			(T_k)^{(s,s)} = \sqrt{\frac{\zeta_{k,s}N_t}{\sum_{j=1}^{N_t}\zeta_{k,j}}}\;\forall s\in[1,N_t]
-		\end{equation}
-
-	\item calculate used Power
-		\begin{equation}
-			P_k = \frac{\zeta_{k,s}}{\vert(T_k)^{(s,s)}\vert^2}(\gamma_{tgt}+1)\;\forall k
-		\end{equation}
-
-	\item[n.] until no more change
-
-\end{enumerate}
+		\end{algomathdisplay}
+		calculate the optimal loading matrix
+		\begin{algomathdisplay}
+			(\mathbf{T}_k)^{(s,s)} = \sqrt{\frac{\zeta_{k,s}N}{\sum_{j=1}^{N}\zeta_{k,j}}}\;\forall s\in[1,N]
+		\end{algomathdisplay}
+		calculate used Power
+		\begin{equation*}
+			P_k = \frac{\zeta_{k,s}}{\vert(\mathbf{T}_k)^{(s,s)}\vert^2}(\gamma_{tgt}+1)\;\forall k;
+		\end{equation*}
+	}
+\end{algorithm}
+In our single antenna per user case the precoding matrix $\mathbf{T}_k \in \mathbb{C}^{(N\times N)}$ with $\sum_{s=1}^N{|\mathbf{T}_k^{(s,s)}|^2}=N$ will always be one. $\mahtbf{H}_{k,k}$ denotes the channel matrix from user $k$ to receiver $k$ in our case we only have one base station and thus $\mathbf{H}_{k,j} \in \mathbb{C}^{(M\times 1)}$ with $j=1$. In addition we set both the distance $d^{-\rho}_{k,k}=1$ and the fading coefficient $\chi_{k,k}=1$ since we ignore path losses.
 
 \subsection{analytical gradient}
-We calculate the power minimization on the basis of the analytical gradient for throughput maximization.
+Again we like to compare the results with a analytical gradient search algorithm. So let us first calculate the gradient for the power minimization.
+The idea here was to minimize the difference between the target Rates and the calculated rate for the channel, only by changing the diagonal Values of $\mathbf{P}$.
+So our minimization problem is
 \begin{equation}
-	\mathbf{P} = \arg{\min_{\begin{matrix}
-		P_k\geq 0\,\forall P_k\in \diag{\mathbf{P}}\\
-		R_k = R_{tgt}\,\forall k
-		\end{matrix}}{\sum_k{P_k}}}
-\end{equation}The idea here was to minimize the difference between the target Rates and the calculated rate for the channel, only by changing the diagonal Values of $\mathbf{P}$.
-So our problem gets reformed into
-\begin{equation}
-	\mathbf{P} = \arg{\max_{P_k\geq 0\,\forall P_k\in \diag{\mathbf{P}}}{\sum_k{\bigr(R_k-R_{tgt}\bigl)}}}
+	\begin{aligned}
+		& \underset{\mathbf{P}}{\text{minimize}}
+		& & \sum_k{\bigr(R_k-R_{tgt}\bigl)} \\
+		& \text{subject to}
+		& & P_k\geq 0,\,\forall P_k\in \diag{\mathbf{P}}.
+	\end{aligned}
 \end{equation}
 Again we use $\mathbf{X}^2 = \mathbf{P}$ to make sure to only get positive power Values but since we do not care about some power power budget $P_{tot}$ we can removed the condition $\trace{\mathbf{P}}\leq P_{tot}$. $\mathbf{\Phi}$ then becomes
 \begin{equation}
-	\mathbf{\Phi} = \mathbf{X}\mathbf{H}^H\frac{1}{\sigma^2}\mathbf{H} \mathbf{X} + \mathbf{I_M}
+	\mathbf{\Phi} = \mathbf{X}\mathbf{H}^H\frac{1}{\sigma^2}\mathbf{H} \mathbf{X} + \mathbf{I_N}
 \end{equation}
 and the for the Rate of user $k$
 \begin{equation}
@@ -70,9 +84,9 @@ and the derivative of $\mathbf{\Phi}$ as
 	&= \partial_{x_j} \biggr(\mathbf{X}\mathbf{H}^H\frac{1}{\sigma^2}\mathbf{H} \mathbf{X}\biggl)\\
 	&= \mathbf{E}_{j,j}\mathbf{H}^H\frac{1}{\sigma^2}\mathbf{HX} + \mathbf{XH}^H\frac{1}{\sigma^2}\mathbf{HE}_{j,j}
 \end{align}
-and finally
+and finally the partial derivative of $R_k$ by the $j$-th element of $\mathbf{P}$
 \begin{equation}
 	\begin{aligned}
-		\partial_{X_j}(R_k) = \frac{1}{2}\Biggr(\sum_k{(R_k-R_{tgt})^2}\Biggl)^{-1/2}\cdot\sum_k{\Biggr[2(R_k-R_{tgt})\cdot\frac{1}{\log{2}\cdot\mathbf{\Phi}_{k,k}^{-1}}\cdot\\\cdot\Biggr(-\mathbf{\Phi}^{-1} \cdot\Biggr( \mathbf{E}_{j,j}\mathbf{H}^H\frac{1}{\sigma^2}\mathbf{HX} + \mathbf{XH}^H\frac{1}{\sigma^2}\mathbf{HE}_{j,j}\Biggl) \cdot \mathbf{\Phi}^{-1}\Biggl)_{k,k}\Biggl]}.
+		\partial_{X_j}(R_k) = &\Biggr(\sum_k{(R_k-R_{tgt})^2}\Biggl)^{-1/2}\cdot\sum_k{\Biggr[\frac{R_k-R_{tgt}}{\log{2}\cdot\mathbf{\Phi}_{k,k}^{-1}}\cdot\\&\cdot\Biggr(\mathbf{\Phi}^{-1} \cdot\Biggr( \mathbf{E}_{j,j}\mathbf{H}^H\frac{1}{\sigma^2}\mathbf{HX} + \mathbf{XH}^H\frac{1}{\sigma^2}\mathbf{HE}_{j,j}\Biggl) \cdot \mathbf{\Phi}^{-1}\Biggl)_{k,k}\Biggl]}.
 	\end{aligned}
 \end{equation}

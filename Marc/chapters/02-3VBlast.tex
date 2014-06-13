@@ -1,9 +1,35 @@
 \section{optimizing VBlast}
+In this section we again try to optimize for the user rates of a given channel $\mathbf{H}$ with noise power $\sigma^2$. We use a system with $K$ single-antenna users and one receiver with $N$ antennas. This again gives us
+\begin{equation}
+	\mathbf{y}^{(M\times 1)} = \mathbf{H}^{(M\times K)}\cdot \mathbf{x}^{(K\times 1)}.
+\end{equation}
+as the system equation we use $\mathbf{P}=\diag{P_1,\dots,P_K}$ as the diagonal power allocation matrix and $P_{tot}$ the total power constraint, there will not be any per user power constraint. With a VBlast receiver we can calculate the SINR and rates per user as follows
+//formula
+and the sum-rate $\sum_k{R_k}$ becomes
+\begin{equation}
+	\sum_k{R_k}=\log_2{\det{\Biggr(\mathbf{\sqrt{P}H}^H\frac{1}{\sigma^2}\mathbf{H\sqrt{P}}+\mathbf{I}\Biggl)}}.
+\end{equation}
+\subsection{maximizing the throughput of the system}
+We try to optimize
+\begin{equation}
+	\begin{aligned}
+		& \underset{\mathbf{P}}{\text{maximize}}
+		& & \sum_k{R_k(\mathbf{P})} \\
+		& \text{subject to}
+		& & P_k\geq 0,\,\forall P_k\in \diag{\mathbf{P}}, \\
+		&&& \trace{\mathbf{P}}\leq P.
+	\end{aligned}
+\end{equation}
+One solution of this problem can be found by using the algorithm proposed by Jindal. The scenario Jindal uses in his paper is an extension of ours, he uses $K$ users with $M$ antennas and one receiver with $N$ antennas, this gives him $K$ $N\times M$ channel matrices. So to use his algorithm we only have to transform our $N\times K$ channel matrix into $K$ $N\times K$ matrices and our channel becomes
+\begin{equation}
+	\mathbf{y}_k = \mathbf{H}_k^{(N\times 1)} \cdot x_k
+\end{equation}
+with $\mathbf{y} = \sum_k{\mathbf{y}_k}$ the received vector.
 
-\subsection{numeric Gradient}
-
-\subsubsection{Numerical Gradient}
-The numerical Algorithm calculates the Gradient with numerical means. Which means to increase the input in each dimension one after another by a very small amount and recalculate output. With both results, the original one and the new ones, we can approximate the local gradient very precisely.
+Another solution can be found by using a gradient search similar to the one for the LMMSE receiver. Only here we will use a numerical gradient which calculates the gradient numerically by increasing the input by a small value $\eta$ for each dimension one after another. With a small enough value for $\eta$ we will get a very good approximation for the gradient since
+\begin{equation}
+	\frac{df(x)}{dx}= \lim_{\eta\to 0}{\frac{f(x+\eta)-f(x)}{(x+\eta)-x}}.
+\end{equation}
 \begin{algorithm}
 	\KwIn{$\mathbf{X^{(0)}}$, $f(\mathbf{X})$, $\eta$ (interval), $\mu$ (step size)}
 	\KwOut{$\mathbf{X}^{(\text{end})}$}
@@ -27,6 +53,4 @@ The numerical Algorithm calculates the Gradient with numerical means. Which mean
 		$\;
 	}		
 \end{algorithm}
-\subsubsection{max sumRate}
-\subsubsection{max minRate}
-
+We will again use the norm instead of the sum to calculate the sum rate so we can use the code for the throughput maximizer with $p=1$ and $p=-30$ gives us the maxmin optimizer. As shown in our results the numerical gradient yields the same result as Jindal's iterative water-filling algorithm.
